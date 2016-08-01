@@ -57,7 +57,7 @@ class Propiedad extends Model
     public static $rules = [
         
     ];
-
+    
     /**
      * @return mixed
      */

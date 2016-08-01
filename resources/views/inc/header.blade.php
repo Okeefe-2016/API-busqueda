@@ -17,4 +17,5 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/04-NEWS.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/07-BÚSQUEDA PROP-02.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/08-FICHA PROPIEDAD-01.css') }}">
+  <link rel="stylesheet" href="{{assets('assets/js/plugins/angular-toastr/dist/angular-toastr.css')}}">
 </head>

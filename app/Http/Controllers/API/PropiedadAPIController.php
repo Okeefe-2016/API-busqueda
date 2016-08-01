@@ -4,13 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\CreatePropiedadesAPIRequest;
 use App\Http\Requests\API\UpdatePropiedadesAPIRequest;
-use App\Models\Propiedad;
 use App\Models\Propiedades;
 use App\Models\UbicacionPropiedad;
 use App\Repositories\PropiedadRepository;
 use App\Repositories\UbicacionPropiedadRepository;
-use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Request;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -29,6 +28,15 @@ class PropiedadAPIController extends AppBaseController
     public function __construct(PropiedadRepository $propiedadesRepo)
     {
         $this->propiedadesRepository = $propiedadesRepo;
+    }
+
+    public function byIds(Request $request, UbicacionPropiedadRepository $ubica)
+    {
+        $lists = $request->all();
+
+        $prop = $this->propiedadesRepository->getManyWithUbica($lists, $ubica);
+
+        return response()->json($prop);
     }
 
     /**
@@ -159,17 +167,7 @@ class PropiedadAPIController extends AppBaseController
      */
     public function show($id, UbicacionPropiedadRepository $ubica)
     {
-        $propiedad = Propiedad::with(['propiedad_caracteristicas' => function($q) {
-            $q->select('id_prop_carac', 'id_prop', 'id_carac', 'contenido');
-        }, 'propiedad_caracteristicas.caracteristica' => function($q) {
-            $q->select( 'id_carac', 'id_tipo_carac', 'titulo');
-        }])->find($id);
-
-        if(!$propiedad) {
-            return response()->json(['message' => 'not found', 'code' => '404'], 404);
-        }
-
-        $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
+        $propiedad = $this->propiedadesRepository->getWithUbication($ubica, $id);
 
         return response()->json(['message' => 'success', 'code' => '200', 'data' => $propiedad]);
     }

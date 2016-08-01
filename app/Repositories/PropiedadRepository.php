@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Propiedad;
+use App\Models\UbicacionPropiedad;
 use App\Services\CotizationService;
 use Illuminate\Http\Response;
 use InfyOm\Generator\Common\BaseRepository;
@@ -37,6 +38,39 @@ class PropiedadRepository extends BaseRepository
 
         $this->publicURL = env('PUBLIC_URL');
         $this->cotizationService = $cotizationService;
+    }
+
+    /**
+     * @param $id
+     */
+    public function getWithUbication($ubica, $id) {
+
+        $propiedad = Propiedad::with(['propiedad_caracteristicas' => function($q) {
+            $q->select('id_prop_carac', 'id_prop', 'id_carac', 'contenido');
+        }, 'propiedad_caracteristicas.caracteristica' => function($q) {
+            $q->select( 'id_carac', 'id_tipo_carac', 'titulo');
+        }])->find($id);
+
+        $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
+    }
+
+    /**
+     * @param UbicacionPropiedad $ubica
+     * @param $ids
+     */
+    public function getManyWithUbica($ids, $ubica) {
+
+        $propiedad = Propiedad::with(['propiedad_caracteristicas' => function($q) {
+            $q->select('id_prop_carac', 'id_prop', 'id_carac', 'contenido');
+        }, 'propiedad_caracteristicas.caracteristica' => function($q) {
+            $q->select( 'id_carac', 'id_tipo_carac', 'titulo');
+        }])->find($ids);
+
+        $propiedad->map(function($value) use ($ubica) {
+            $value->ubica = $ubica->getById($value->id_ubica);
+        });
+
+        return $propiedad;
     }
 
     /**

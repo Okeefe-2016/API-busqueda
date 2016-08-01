@@ -67,7 +67,12 @@ clASs UbicacionPropiedadRepository
         return $ubications;
     }
 
-    // Get ubication by id
+    /**
+     * Get ubication by id
+     *
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getById($id)
     {
         $query = "
