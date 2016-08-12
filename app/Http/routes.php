@@ -23,11 +23,16 @@ Route::get('/home', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => 'api', 'namespace' => 'API'], function () {
-    Route::group(['prefix' => 'v1'], function () {
-        require config('infyom.laravel_generator.path.api_routes');
+Route::group(['prefix' => 'api', 'namespace' => 'API', 'middleware' => '\Barryvdh\Cors\HandleCors::class'],
+    function () {
+        Route::group(['prefix' => 'v1'], function () {
+            require config('infyom.laravel_generator.path.api_routes');
+        });
     });
-});
+
+Route::group(['middleware' => '\Barryvdh\Cors\HandleCors::class'],
+    function () {
+        Route::resource('propiedades', 'PropiedadesController');
+    });
 
 
-Route::resource('propiedades', 'PropiedadesController');
