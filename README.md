@@ -4,11 +4,9 @@
 
 ###Clonar el repo
 
-`$ git clone https://github.com/Lyncros/okeefe.git`
+`$ git clone https://github.com/Okeefe-2016/API-busqueda.git`
 
 `$ cd okeefe`
-
-`$ git checkout develop`
 
 `$ composer install`
 
