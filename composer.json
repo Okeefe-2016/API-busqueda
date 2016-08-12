@@ -11,7 +11,8 @@
         "laravelcollective/html": "5.2.*",
         "infyomlabs/core-templates": "dev-master",
         "infyomlabs/swagger-generator": "dev-master",
-        "jlapp/swaggervel": "dev-master"
+        "jlapp/swaggervel": "dev-master",
+        "barryvdh/laravel-cors": "^0.8.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
