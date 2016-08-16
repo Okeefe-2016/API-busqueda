@@ -7,7 +7,8 @@ use App\Http\Requests\CreatePropiedadesRequest;
 use App\Http\Requests\UpdatePropiedadesRequest;
 use App\Models\Propiedad;
 use App\Models\UbicacionPropiedad;
-use App\Repositories\PropiedadesRepository;
+use App\Repositories\PropiedadRepository;
+use App\Repositories\UbicacionPropiedadRepository;
 use Illuminate\Http\Request;
 use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -18,7 +19,7 @@ class PropiedadesController extends AppBaseController
     /** @var  PropiedadesRepository */
     private $propiedadesRepository;
 
-    public function __construct(PropiedadesRepository $propiedadesRepo)
+    public function __construct(PropiedadRepository $propiedadesRepo)
     {
         $this->propiedadesRepository = $propiedadesRepo;
     }
@@ -74,7 +75,7 @@ class PropiedadesController extends AppBaseController
      * @param UbicacionPropiedad $ubica
      * @return Response
      */
-    public function show($id, UbicacionPropiedad $ubica)
+    public function show($id, UbicacionPropiedadRepository $ubica)
     {
         $propiedad = Propiedad::with(['propiedad_caracteristicas' => function($q) {
             $q->select('id_prop_carac', 'id_prop', 'id_carac', 'contenido');

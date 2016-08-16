@@ -30,9 +30,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'API', 'middleware' => '\Barryvd
         });
     });
 
-Route::group(['middleware' => '\Barryvdh\Cors\HandleCors::class'],
+Route::group(['prefix' => 'api/v1', 'middleware' => '\Barryvdh\Cors\HandleCors::class'],
     function () {
-        Route::resource('propiedades', 'PropiedadesController');
+        Route::get('propiedades/{id}', 'PropiedadesController@show');
     });
 
 
