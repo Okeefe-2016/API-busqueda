@@ -39,6 +39,10 @@ http://pastebin.com/2t5maHyt
 
 `/api/v1/propiedad?q=Wilde&operacion=12&tipo=9`
 
+**Es posible consultar mas de un tipo de propiedad**
+
+`api/v1/propiedad?q=quilmes&tipo=9,1`
+
 **Tipos de operacion (IDs)**
 
 - Alquiler -> 2

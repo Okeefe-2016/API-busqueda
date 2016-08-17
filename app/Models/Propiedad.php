@@ -71,4 +71,9 @@ class Propiedad extends Model
     {
         return $this->belongsTo(Emprendimiento::class, 'id_emp');
     }
+
+    public function foto()
+    {
+        return $this->hasMany(Foto::class, 'id_prop', 'id_prop');
+    }
 }

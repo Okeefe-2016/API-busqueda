@@ -191,7 +191,7 @@ class PropiedadRepository extends BaseRepository
           ' . $moneyType . '
           WHERE p.id_ubica = ' . $element->idZona . ' 
               AND p.tipo_oper_id = "' . $searchValues['operacion'] . '"
-              AND p.id_tipo_prop = ' . $searchValues['tipo'] .'
+              AND  p.id_tipo_prop IN (' . $searchValues['tipo'] .')
               AND cco.cantidad_cocheras '. $searchValues['coch'] .'
               AND caa.cantidad_antiguedad '. $searchValues['ant'] .'
               AND st.sup_total BETWEEN '. $searchValues['supMin'] .' AND '. $searchValues['supMax'] .' 
