@@ -162,7 +162,8 @@ class PropiedadRepository extends BaseRepository
                 cco.cantidad_cocheras,
                 caa.cantidad_antiguedad,
                 mon.moneda, 
-                val.valor, 
+                webindex.fichaweb,
+                val.valor,
                 IF(mon.moneda = "U$S", val.valor * 14, val.valor) AS valor_convertido, 
                 caa.cantidad_antiguedad,
                 IF(sca.cantidad_ambientes is null, 1, sca.cantidad_ambientes) AS cantidad_ambientes,
@@ -176,6 +177,9 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN 
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st 
                 ON p.id_prop=st.id_prop
+          LEFT JOIN 
+              (SELECT id_prop, contenido AS fichaweb FROM propiedad_caracteristicas WHERE id_carac = 257) AS webindex 
+                ON p.id_prop=webindex.id_prop
           LEFT JOIN 
             (SELECT id_prop, contenido AS cantidad_ambientes FROM propiedad_caracteristicas WHERE id_carac = 208) AS sca 
                 ON p.id_prop=sca.id_prop
@@ -236,6 +240,7 @@ class PropiedadRepository extends BaseRepository
                 mon.moneda, 
                 val.valor, 
                 cco.cantidad_cocheras,
+                webindex.fichaweb,
                 caa.cantidad_antiguedad,
                 IF(mon.moneda = "U$S", val.valor * 14, val.valor) AS valor_convertido, caa.cantidad_antiguedad,
                 IF(sca.cantidad_ambientes is null, 0, sca.cantidad_ambientes) AS cantidad_ambientes,
@@ -249,6 +254,9 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN 
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st 
                 ON p.id_prop=st.id_prop
+          LEFT JOIN 
+            (SELECT id_prop, contenido AS fichaweb FROM propiedad_caracteristicas WHERE id_carac = 257) AS webindex 
+                ON p.id_prop=webindex.id_prop
           LEFT JOIN 
             (SELECT id_prop, contenido AS cantidad_ambientes FROM propiedad_caracteristicas WHERE id_carac = 208) AS sca 
                 ON p.id_prop=sca.id_prop
