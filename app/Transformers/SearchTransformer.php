@@ -27,7 +27,7 @@ class SearchTransformer
     {
         $searchValues = $this->setDefaultsValues($request);
 
-        $ubicationsProperties = $ubications->map(function ($element) use ($searchValues) {
+        $ubicationsProperties = $ubications->map(function ($element) use ($searchValues, $request) {
 
             $element->zona = trim($element->zona);
             $element->localidad = trim($element->localidad);
@@ -35,7 +35,7 @@ class SearchTransformer
 
             $properties = $this->getPropertiesData($element, $searchValues);
 
-            return [
+            $props = [
                 'valor' => $element->valor,
                 'pais' => $element->pais,
                 'zona_padre' => $element->zona_padre,
@@ -44,8 +44,13 @@ class SearchTransformer
                 'zona_hija' => $element->zona_emprendimiento,
                 'id_zona' => $element->idZona,
                 'cantidad' => count($properties),
-                'propiedades' => $properties
             ];
+
+            if ($request->mostrar_props == true) {
+                $props['propiedades'] =  $properties;
+            }
+
+            return $props;
         });
 
         return $ubicationsProperties;
