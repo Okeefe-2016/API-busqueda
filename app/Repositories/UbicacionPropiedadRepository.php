@@ -35,9 +35,9 @@ clASs UbicacionPropiedadRepository
      * @param $request
      * @return mixed
      */
-    public function getParentWithChildsQuery($request)
+    public function getParentWithChildsQuery($request, $params)
     {
-        $keyword = "%$request->q%";
+        $keyword = $request->ubicacion;
 
         $query = "
                 SELECT  
@@ -58,11 +58,11 @@ clASs UbicacionPropiedadRepository
                 LEFT JOIN ubicacionpropiedad AS t3 ON t3.id_padre = t2.id_ubica 
                 LEFT JOIN ubicacionpropiedad AS t4 ON t4.id_padre = t3.id_ubica
                 WHERE t2.nombre_ubicacion != t3.nombre_ubicacion AND t0.id_padre  = 0
-                HAVING valor LIKE '$keyword'";
+                HAVING idZona = $keyword";
 
         $ubications = $this->ubicacionPropiedad->hydrateRaw($query);
 
-        $ubications = $this->searchService->searchUbicacionPropiedad($ubications, $request);
+        $ubications = $this->searchService->searchUbicacionPropiedad($ubications, $request, $params);
 
         return $ubications;
     }

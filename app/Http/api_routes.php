@@ -17,5 +17,7 @@ Route::resource('localidades', 'LocalidadAPIController');
 
 Route::resource('pais', 'PaisAPIController');
 
-Route::get('propiedad', 'UbicacionPropiedadAPIController@getUbicacionPropiedad');
+Route::get('propiedades/{tipo}/{operacion}', 'UbicacionPropiedadAPIController@getUbicacionPropiedad');
+
+Route::get('ubicacion/{zona}/{tipo}/{operacion}', 'UbicacionAPIController@index');
 

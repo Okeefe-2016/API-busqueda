@@ -80,13 +80,13 @@ class PropiedadRepository extends BaseRepository
      * @param $searchValues
      * @return mixed
      */
-    public function byPropertiesSpec($element, $searchValues)
+    public function byPropertiesSpec($element, $searchValues, $params)
     {
 
             if ($searchValues['rural'] === false) {
-                $query = $this->getPropiedadQuery($element, $searchValues);
+                $query = $this->getPropiedadQuery($element, $searchValues, $params);
             } else {
-                $query = $this->getPropiedadByRuralQuery($element, $searchValues);
+                $query = $this->getPropiedadByRuralQuery($element, $searchValues, $params);
             }
 
             $result = $this->model->hydrateRaw($query);
@@ -101,11 +101,11 @@ class PropiedadRepository extends BaseRepository
      * @param $values
      * @return string
      */
-    private function getMoneyType($values) {
+    private function getMoneyType($values, $params) {
 
         $moneyType = " ";
 
-        if ($values['operacion'] == 12) {
+        if ($params['operacion'] == 12) {
             $moneyType = "
                   LEFT JOIN
 				    (SELECT id_prop, contenido AS moneda FROM propiedad_caracteristicas WHERE id_carac=165) AS mon 
@@ -113,7 +113,7 @@ class PropiedadRepository extends BaseRepository
 				  LEFT JOIN
 				    (SELECT id_prop, contenido AS valor FROM propiedad_caracteristicas WHERE id_carac=161) AS val 
 				        ON p.id_prop=val.id_prop";
-        } else if ($values['operacion'] == 2 || $values['operacion'] == 4) {
+        } else if ($params['operacion'] == 2 || $params['operacion'] == 4) {
             $moneyType = "
                  LEFT JOIN
 				    (SELECT id_prop, contenido AS moneda FROM propiedad_caracteristicas WHERE id_carac=166) AS mon 
@@ -133,9 +133,9 @@ class PropiedadRepository extends BaseRepository
      * @param $searchValues
      * @return string
      */
-    private function getPropiedadQuery($element, $searchValues)
+    private function getPropiedadQuery($element, $searchValues, $params)
     {
-        $moneyType = $this->getMoneyType($searchValues);
+        $moneyType = $this->getMoneyType($searchValues, $params);
         $nameFilter = $searchValues['filtroMon'] == 'ARS' ? 'valor_convertido' : 'valor';
 
         return'
@@ -168,7 +168,11 @@ class PropiedadRepository extends BaseRepository
                 caa.cantidad_antiguedad,
                 IF(sca.cantidad_ambientes is null, 1, sca.cantidad_ambientes) AS cantidad_ambientes,
                 e.nombre AS nombre_emprendimiento,
-                IF(fo.foto_principal IS NOT null, CONCAT("'. $this->publicURL .'", fo.foto_principal), "") AS foto_url
+                IF(fo.foto_principal IS NOT null, CONCAT("'. $this->publicURL .'", fo.foto_principal), "") AS foto_url,
+                (CASE  WHEN p.oportunidad = 1 THEN "oportunidad"
+                      WHEN p.destacado = 1 THEN "destacado"
+                      ELSE "otro"
+                END) as tipo_prioridad
           FROM propiedad AS p
           INNER JOIN ubicacionpropiedad AS z ON p.id_ubica = z.id_ubica 
           INNER JOIN tipoprop AS t ON p.id_tipo_prop = t.id_tipo_prop
@@ -194,8 +198,8 @@ class PropiedadRepository extends BaseRepository
                 ON p.id_prop=caa.id_prop
           ' . $moneyType . '
           WHERE p.id_ubica = ' . $element->idZona . ' 
-              AND p.tipo_oper_id = "' . $searchValues['operacion'] . '"
-              AND  p.id_tipo_prop IN (' . $searchValues['tipo'] .')
+              AND p.tipo_oper_id = "' . $params['operacion'] . '"
+              AND  p.id_tipo_prop IN (' . $params['tipo'] .')
               AND cco.cantidad_cocheras '. $searchValues['coch'] .'
               AND caa.cantidad_antiguedad '. $searchValues['ant'] .'
               AND st.sup_total BETWEEN '. $searchValues['supMin'] .' AND '. $searchValues['supMax'] .' 
@@ -203,9 +207,12 @@ class PropiedadRepository extends BaseRepository
               AND sba.cantidad_banos ' . $searchValues['banos'] .'
               AND p.tiene_emprendimiento  = '. $searchValues['emp'] .'
           HAVING '. $nameFilter .' BETWEEN '. $searchValues['valMin'] . ' AND '. $searchValues['valMax']  . ' 
-              AND cantidad_ambientes '. $searchValues['amb'];
-
-
+              AND cantidad_ambientes '. $searchValues['amb'] .
+            " ORDER BY
+                CASE 
+                    WHEN p.oportunidad = 1 THEN p.oportunidad
+                    WHEN p.destacado = 1 THEN p.destacado
+                END DESC";
     }
 
     /**
@@ -215,9 +222,9 @@ class PropiedadRepository extends BaseRepository
      * @param $searchValues
      * @return bool
      */
-    private function getPropiedadByRuralQuery($element, $searchValues)
+    private function getPropiedadByRuralQuery($element, $searchValues, $params)
     {
-        $moneyType = $this->getMoneyType($searchValues);
+        $moneyType = $this->getMoneyType($searchValues, $params);
 
         return'
           SELECT p.id_prop, 
@@ -268,8 +275,8 @@ class PropiedadRepository extends BaseRepository
                 ON p.id_prop=caa.id_prop
           ' . $moneyType . '
           WHERE p.id_ubica = ' . $element->idZona . ' 
-              AND p.tipo_oper_id = "' . $searchValues['operacion'] . '"
-              AND p.id_tipo_prop = ' . $searchValues['tipo'] .'
+              AND p.tipo_oper_id = "' . $params['operacion'] . '"
+              AND p.id_tipo_prop = ' . $params['tipo'] .'
               AND cco.cantidad_cocheras '. $searchValues['coch'] .'
               AND caa.cantidad_antiguedad '. $searchValues['ant'] .'
               AND st.sup_total BETWEEN '. $searchValues['supMin'] .' AND '. $searchValues['supMax'] .' 

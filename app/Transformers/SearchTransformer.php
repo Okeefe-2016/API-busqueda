@@ -23,37 +23,21 @@ class SearchTransformer
      * @param $request
      * @return static
      */
-    public function searchUbicacionPropiedad($ubications, $request)
+    public function searchUbicacionPropiedad($ubications, $request, $params)
     {
         $searchValues = $this->setDefaultsValues($request);
 
-        $ubicationsProperties = $ubications->map(function ($element) use ($searchValues, $request) {
+            $ubicacion = $ubications->first();
 
-            $element->zona = trim($element->zona);
-            $element->localidad = trim($element->localidad);
-            $element->subzona = trim($element->subzona);
-
-            $properties = $this->getPropertiesData($element, $searchValues);
+            $properties = $this->getPropertiesData($ubicacion, $searchValues, $params);
 
             $props = [
-                'valor' => $element->valor,
-                'pais' => $element->pais,
-                'zona_padre' => $element->zona_padre,
-                'localidad' => $element->localidad,
-                'subzona' => $element->subzona,
-                'zona_hija' => $element->zona_emprendimiento,
-                'id_zona' => $element->idZona,
-                'cantidad' => count($properties),
+                'ubicacion' => $ubicacion->valor,
+                'propiedades' => $properties
             ];
 
-            if ($request->mostrar_props == true) {
-                $props['propiedades'] =  $properties;
-            }
-
             return $props;
-        });
 
-        return $ubicationsProperties;
     }
 
     /**
@@ -65,9 +49,9 @@ class SearchTransformer
      * @internal param $type
      * @internal param $operation
      */
-    private function getPropertiesData($element, $searchValues)
+    private function getPropertiesData($element, $searchValues, $params)
     {
-        $properties = $this->propiedadRepository->byPropertiesSpec($element, $searchValues);
+        $properties = $this->propiedadRepository->byPropertiesSpec($element, $searchValues, $params);
 
         return $properties;
     }

@@ -7,10 +7,7 @@
  * en la query de \App\Repositories\PropiedadRepository
  */
 return [
-    'operacion' => 12,
-
-    'tipo' => 9,
-
+    
     'valMin' => 0,
 
     'valMax' => 100000000000,

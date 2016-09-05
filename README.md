@@ -27,21 +27,30 @@ http://pastebin.com/2t5maHyt
 
 # Api Docs
 
+## Busqueda de propiedades por zona
+
+- Tipo = Integer
+- Operacion = Integer
+
+`/api/v1/propiedades/{ubicacion}/{tipo}/{operacion}/?emp={bool}?rural={bool}`
+
+- Esta busqueda entregara un array donde se sacara la el id de la ubicacion
+
 ## Busqueda de inmuebles segun tipo, operacion, ubicacion
 
 - Los valores por defectos son Casa en Venta
 
 ***Busqueda de todos los departamentos en venta.***
 
-`/api/v1/propiedad?operacion=12&tipo=9`
+`/api/v1/propiedades/{tipo}/{operacion}/?ubicacion=id`
 
-***Busqueda de departamentos en venta en Wilde***
+***Busqueda de departamentos en venta en una ubicacion***
 
-`/api/v1/propiedad?q=Wilde&operacion=12&tipo=9`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id`
 
 **Es posible consultar mas de un tipo de propiedad**
 
-`api/v1/propiedad?q=quilmes&tipo=9,1`
+`/api/v1/propiedades/9,2/{operacion}/?ubicacion=id`
 
 **Tipos de operacion (IDs)**
 
@@ -49,10 +58,6 @@ http://pastebin.com/2t5maHyt
 - Alquiler temporario -> 4
 - Venta -> 12
 
-- Por default inversión (emprendimiento) no se muestran para que esten disponibles
-se debe usar la llamada:
-
-`/api/v1/propiedad?q=quilmes&emp=1&tipo=9&operacion=12`
 
 ## Busqueda de recidencial
 
@@ -65,33 +70,33 @@ se debe usar la llamada:
 
 ***Rango de valor del inmueble***
 
-`/api/v1/propiedad?valMin=0&valMax=100000`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&valMin=0&valMax=100000`
 
 ***Rango Superficie (m2)***
 
-`/api/v1/propiedad?supMin=0&supMax=100`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&supMin=0&supMax=100`
 
 ***Cantidad de ambientes***
 
-`/api/v1/propiedad?amb==5`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&amb==5`
 
 ***Cantidad de cocheras***
 
-`/api/v1/propiedad?coch==5`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&coch==5`
 
 ***Antiguedad***
 
-`/api/v1/propiedad?ant==5`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&ant==5`
 
 ***Tipo de moneda (Default U$D y $)***
 
 *Busqueda disponible para pesos argentinos y dolares americanos*
 
-`/api/v1/propiedad?moneda=$`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&moneda=$`
 
 ***Cantidad de baños***
 
-`/api/v1/propiedad?banos==2`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&banos==2`
 
 ## Busqueda de comercial/industrial
 
@@ -104,35 +109,35 @@ se debe usar la llamada:
 - Galpones -> 15
 - Cocheras -> 18
 
-`/api/v1/propiedad?tipo=11`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&tipo=11`
 
 ***Rango de valor del inmueble***
 
-`/api/v1/propiedad?valMin=0&valMax=100000`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&valMin=0&valMax=100000`
 
 ***Cantidad de baños***
 
-`/api/v1/propiedad?tipo=11&banos==2`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&tipo=11&banos==2`
 
 ***Cantidad de ambientes***
 
-`/api/v1/propiedad?tipo=11&amb==1`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&tipo=11&amb==1`
 
 ***Cantidad de cocheras***
 
-`/api/v1/propiedad?tipo=11&coch==1`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&tipo=11&coch==1`
 
 ***Antiguedad***
 
-`/api/v1/propiedad?tipo=11&ant==1`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&tipo=11&ant==1`
 
 ***Rango Superficie (m2)***
 
-`/api/v1/propiedad?tipo=11&supMin=0&supMax=100`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&&supMin=0&supMax=100`
 
 *Busqueda disponible para pesos argentinos y dolares americanos*
 
-`/api/v1/propiedad?moneda=$`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&moneda=$`
 
 ## Busqueda rural
 
@@ -145,29 +150,29 @@ se debe usar la llamada:
 - Campos -> 6,
 - Galpones' -> 15
 
-EJ: `/api/v1/propiedad?tipo=6&operacion=12&rural=true`
+EJ: `/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&rural=true`
 
-`/api/v1/propiedad?tipo=7&rural=true`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&&rural=true`
 
 ***Cantidad de cocheras***
 
-`/api/v1/propiedad?tipo=11&coch==1&rural=true`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&coch==1&rural=true`
 
 ***Antiguedad***
 
-`/api/v1/propiedad?tipo=11&ant==1&rural=true`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&&ant==1&rural=true`
 
 ***Rango Superficie (h)***
 
-`/api/v1/propiedad?tipo=11&supMin=0&supMax=100&rural=true`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&supMin=0&supMax=100&rural=true`
 
 ***Rango de valor del inmueble***
 
-`/api/v1/propiedad?valMin=0&valMax=100000&rural=true`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&valMin=0&valMax=100000&rural=true`
 
 *Busqueda disponible para pesos argentinos y dolares americanos*
 
-`/api/v1/propiedad?moneda=$&rural=true`
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&moneda=$&rural=true`
 
 ##Filtros Especiales
 
@@ -176,13 +181,13 @@ EJ: `/api/v1/propiedad?tipo=6&operacion=12&rural=true`
 Si la moneda de la propiedad es USD (Dolares americanos) se podra buscar por su
 conversión en pesos. La converción es dinamica al valor del dia segun BCRA.
 
-`/api/v1/propiedad&filtroMon=ARS`  (Valor por defecto)
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&filtroMon=ARS`  (Valor por defecto)
 
-`/api/v1/propiedad&filtroMon=USD` (Filtro segun su moneda)
+`/api/v1/propiedades/{tipo/s}/{operacion}/?ubicacion=id&filtroMon=USD` (Filtro segun su moneda)
 
 ## Busqueda de propiedades
 Esta disponible la busqueda individual de propiedades con sus caracteristicas
-`api/v1/propiedades/{id_prop}`
+`/api/v1/propiedad/{id_prop}`
 
 
 

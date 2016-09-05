@@ -29,18 +29,21 @@ class UbicacionPropiedadAPIController extends AppBaseController
      * @param Request $request
      * @return mixed
      */
-    public function getUbicacionPropiedad(Request $request)
+    public function getUbicacionPropiedad(Request $request, $tipo, $operacion)
     {
+
         if ($request->rural) {
-            $allowedTypeProp =  in_array($request->tipo, config('propDefaults.rural.tipo'));
+            $allowedTypeProp =  in_array($tipo, config('propDefaults.rural.tipo'));
 
             if (!$allowedTypeProp) {
                 return response()->json(['message' => 'Tipo de propiedad rural no valido', 'code' => 401], 401);
             }
         }
 
+        $params =  ['tipo' => $tipo, 'operacion' => $operacion];
+
         $result = $this->ubicacionPropiedadRepository
-            ->getParentWithChildsQuery($request);
+            ->getParentWithChildsQuery($request, $params);
 
         if ($result) {
             return response()->json(['message' => 'success', 'code' => 200, 'data' => $result]);
