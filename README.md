@@ -32,7 +32,7 @@ http://pastebin.com/2t5maHyt
 - Tipo = Integer
 - Operacion = Integer
 
-`/api/v1/propiedades/{ubicacion}/{tipo}/{operacion}/?emp={bool}?rural={bool}`
+`/api/v1/ubicacion/{nombreUbicacion}/{tipo}/{operacion}/?emp={bool}?rural={bool}`
 
 - Esta busqueda entregara un array donde se sacara la el id de la ubicacion
 
