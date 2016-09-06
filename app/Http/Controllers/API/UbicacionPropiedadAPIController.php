@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\UbicacionPropiedadRepository;
 use Illuminate\Http\Request;

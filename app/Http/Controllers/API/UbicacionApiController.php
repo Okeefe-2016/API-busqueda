@@ -8,14 +8,13 @@
 
 namespace App\Http\Controllers\API;
 
-
 use App\Http\Controllers\AppBaseController;
 use App\Models\UbicacionPropiedad;
 use App\Repositories\UbicacionPropiedadRepository;
 use App\Repositories\UbicacionRepository;
 use Illuminate\Http\Request;
 
-class UbicacionApiController extends AppBaseController
+class UbicacionAPIController extends AppBaseController
 {
     protected $ubicacion;
 
