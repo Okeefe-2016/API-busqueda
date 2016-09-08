@@ -87,6 +87,7 @@ class PropiedadesController extends AppBaseController
                     $q->select('id_carac', 'id_tipo_carac', 'titulo');
                 }
             ])->find($id);
+        
 
         $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
 
