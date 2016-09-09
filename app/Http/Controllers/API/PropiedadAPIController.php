@@ -10,10 +10,12 @@ use App\Repositories\PropiedadRepository;
 use App\Repositories\UbicacionPropiedadRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
+use Symfony\Component\Console\Input\Input;
 
 /**
  * Class PropiedadController
@@ -33,8 +35,9 @@ class PropiedadAPIController extends AppBaseController
     public function byIds(Request $request, UbicacionPropiedadRepository $ubica)
     {
         $lists = $request->all();
+        \Log::info($request->all());
 
-        $prop = $this->propiedadesRepository->getManyWithUbica($lists, $ubica);
+        $prop = $this->propiedadesRepository->byIdProps($lists['lists']);
 
         return response()->json($prop);
     }

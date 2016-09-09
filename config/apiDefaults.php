@@ -7,14 +7,14 @@
  * en la query de \App\Repositories\PropiedadRepository
  */
 return [
-    
+
     'valMin' => 0,
 
-    'valMax' => 100000000000,
+    'valMax' => 1000000000000000000000000000,
 
     'supMin' => 0,
 
-    'supMax' => 1000000000000,
+    'supMax' => 100000000000000000000000000000,
 
     // Valores con opciones
     'moneda' => [

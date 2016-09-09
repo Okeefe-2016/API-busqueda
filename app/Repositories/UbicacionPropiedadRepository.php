@@ -4,8 +4,9 @@ namespace App\Repositories;
 
 use App\Models\UbicacionPropiedad;
 use App\Transformers\SearchTransformer;
+use Prettus\Repository\Eloquent\BaseRepository;
 
-clASs UbicacionPropiedadRepository
+class UbicacionPropiedadRepository extends BaseRepository
 {
     /**
      * @var UbicacionPropiedad
@@ -98,5 +99,15 @@ clASs UbicacionPropiedadRepository
         $ubications = $this->ubicacionPropiedad->hydrateRaw($query);
 
         return $ubications;
+    }
+
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
+    {
+        // TODO: Implement model() method.
     }
 }

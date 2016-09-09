@@ -6,15 +6,8 @@ use App\Repositories\PropiedadRepository;
 
 class SearchTransformer
 {
-    /**
-     * @var PropiedadRepository
-     */
-    protected $propiedadRepository;
 
-    public function __construct(PropiedadRepository $propiedadRepository)
-    {
-        $this->propiedadRepository = $propiedadRepository;
-    }
+
 
     /**
      * Search property and ubications
@@ -43,15 +36,17 @@ class SearchTransformer
     /**
      * Get properties based given params
      *
+     * @param PropiedadRepository $propiedadRepository
      * @param $element
      * @param $searchValues
+     * @param $params
      * @return mixed
      * @internal param $type
      * @internal param $operation
      */
-    private function getPropertiesData($element, $searchValues, $params)
+    private function getPropertiesData(PropiedadRepository $propiedadRepository, $element, $searchValues, $params)
     {
-        $properties = $this->propiedadRepository->byPropertiesSpec($element, $searchValues, $params);
+        $properties = $propiedadRepository->byPropertiesSpec($element, $searchValues, $params);
 
         return $properties;
     }
