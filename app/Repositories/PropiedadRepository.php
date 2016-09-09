@@ -35,10 +35,8 @@ class PropiedadRepository extends BaseRepository
         return Propiedad::class;
     }
 
-    public function __construct(Application $app, CotizationService $cotizationService, UbicacionPropiedadRepository $ubica)
+    public function __construct(CotizationService $cotizationService, UbicacionPropiedadRepository $ubica)
     {
-        parent::__construct($app);
-
         $this->ubicaRepo = $ubica;
         $this->publicURL = env('PUBLIC_URL');
         $this->cotizationService = $cotizationService;
