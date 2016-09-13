@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lucas
- * Date: 1/9/16
- * Time: 5:11 PM
- */
 
 namespace App\Repositories;
-
 
 use App\Models\UbicacionPropiedad;
 use Illuminate\Http\Request;
@@ -21,14 +14,13 @@ class UbicacionRepository
 
     public function getByParams(Request $request, $zona, $tipo, $operacion)
     {
-        $ubicationQuery = $this->getUbicationQuery($tipo, $operacion);
+        $ubicationQuery = $this->getUbicationQuery();
 
         $query = "{$ubicationQuery}
                 LEFT JOIN propiedad AS prop 
                   ON t3.id_ubica = prop.id_ubica  
                   AND prop.tipo_oper_id = $operacion AND prop.id_tipo_prop in($tipo)
-                WHERE t0.id_padre = 0 
-                  AND t1.nombre_ubicacion != t2.nombre_ubicacion
+                WHERE t1.nombre_ubicacion != t2.nombre_ubicacion
                   AND t4.nombre_ubicacion $request->emp
                 GROUP BY idZona
                 HAVING  valor LIKE '%$zona%'
@@ -44,7 +36,7 @@ class UbicacionRepository
      * @param $operacion
      * @return string
      */
-    public function getUbicationQuery($tipo, $operacion)
+    public function getUbicationQuery()
     {
         $ubicationQuery = "SELECT  
                   t0.nombre_ubicacion AS pais, 
@@ -61,7 +53,7 @@ class UbicacionRepository
                   (CASE
                     WHEN t4.id_ubica is null THEN COUNT(prop.id_ubica)
                     ELSE 
-                      (SELECT count(id_emp) from emprendimiento where id_ubica = t4.id_ubica) 
+                      (SELECT COUNT(id_emp) from emprendimiento where id_ubica = t4.id_ubica) 
                    END) as cantidad,
                   (CASE 
                     WHEN t2.nombre_ubicacion is null THEN CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion)

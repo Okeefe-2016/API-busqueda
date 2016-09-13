@@ -32,14 +32,18 @@ class PropiedadAPIController extends AppBaseController
         $this->propiedadesRepository = $propiedadesRepo;
     }
 
-    public function byIds(Request $request, UbicacionPropiedadRepository $ubica)
+    public function byIds(Request $request)
     {
         $lists = $request->all();
-        \Log::info($request->all());
 
-        $prop = $this->propiedadesRepository->byIdProps($lists['lists']);
+        if (isset($lists['lists'])) {
+            $prop = $this->propiedadesRepository->byIdProps($lists['lists']);
 
-        return response()->json($prop);
+            return response()->json($prop);
+            
+        } else {
+            return response()->json([]);
+        }
     }
 
     /**

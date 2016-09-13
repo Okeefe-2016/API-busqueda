@@ -25,8 +25,6 @@ class PropiedadRepository extends BaseRepository
     protected $cotizationService;
 
 
-    protected $ubicaRepo;
-
     /**
      * Configure the Model
      **/
@@ -35,26 +33,55 @@ class PropiedadRepository extends BaseRepository
         return Propiedad::class;
     }
 
-    public function __construct(CotizationService $cotizationService, UbicacionPropiedadRepository $ubica)
+    public function __construct(CotizationService $cotizationService)
     {
-        $this->ubicaRepo = $ubica;
         $this->publicURL = env('PUBLIC_URL');
         $this->cotizationService = $cotizationService;
     }
 
     /**
+     * Get from configurations default values
+     *
+     * @param $request
+     * @return array
+     */
+    public function setDefaultsValues($request)
+    {
+        $searchValues = [];
+
+        $configKeys = array_keys(config('apiDefaults'));
+
+        foreach ($configKeys as $item) {
+            $searchValues[$item] = !$request->{$item} ? config("apiDefaults.{$item}") : $request->{$item};
+
+
+            if ($searchValues[$item] === true) {
+                $searchValues[$item] = '< 100';
+            }
+
+            if (is_array($searchValues[$item])) {
+                $searchValues[$item] =  config("apiDefaults.{$item}.options");
+            }
+        }
+
+        return $searchValues;
+    }
+
+    /**
      * @param $id
      */
-    public function getWithUbication($ubica, $id)
+    public function getWithUbication($id)
     {
 
-        $propiedad = Propiedad::with(['propiedad_caracteristicas' => function ($q) {
+        $propiedad = Propiedad::with(['foto', 'propiedad_caracteristicas' => function ($q) {
             $q->select('id_prop_carac', 'id_prop', 'id_carac', 'contenido');
         }, 'propiedad_caracteristicas.caracteristica' => function ($q) {
             $q->select('id_carac', 'id_tipo_carac', 'titulo');
         }])->find($id);
 
-        $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
+        $propiedad->ubica = $this->ubicaRepo->getById($propiedad->id_ubica);
+
+        return $propiedad;
     }
 
     /**
@@ -93,7 +120,7 @@ class PropiedadRepository extends BaseRepository
             $query = $this->getPropiedadByRuralQuery($element, $searchValues, $params);
         }
 
-        $result = $this->model->hydrateRaw($query);
+        $result = Propiedad::hydrateRaw($query);
 
         return $result;
     }
@@ -313,15 +340,15 @@ class PropiedadRepository extends BaseRepository
           WHERE p.id_ubica = ' . $element->idZona . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
               AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
-              AND cco.cantidad_cocheras ' . $searchValues['coch'] . '
-              AND caa.cantidad_antiguedad ' . $searchValues['ant'] . '
-              AND st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . '
+              AND (cco.cantidad_cocheras ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
+              AND (caa.cantidad_antiguedad ' . $searchValues['ant'] . ' or caa.cantidad_antiguedad is null)
+              AND (st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . ' or st.sup_total is null)
               AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '")
-              AND sba.cantidad_banos ' . $searchValues['banos'] . '
+              AND (sba.cantidad_banos ' . $searchValues['banos'] . ' or sba.cantidad_banos is null)
               AND p.tiene_emprendimiento  = ' . $searchValues['emp'] . '
           HAVING ' . $nameFilter . ' BETWEEN ' . $searchValues['valMin'] . ' AND ' . $searchValues['valMax'] . '
-              AND cantidad_ambientes ' . $searchValues['amb'] .
-        ' ORDER BY
+              AND (cantidad_ambientes ' . $searchValues['amb'] . ' or sba.cantidad_banos is null)
+          ORDER BY
                 CASE
                     WHEN p.oportunidad = 1 THEN p.oportunidad
                     WHEN p.destacado = 1 THEN p.destacado

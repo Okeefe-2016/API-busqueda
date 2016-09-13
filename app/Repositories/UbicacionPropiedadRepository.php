@@ -22,9 +22,12 @@ class UbicacionPropiedadRepository extends BaseRepository
      * UbicacionPropiedadRepository constructor.
      * @param UbicacionPropiedad $ubicacionPropiedad
      * @param SearchTransformer $searchTranformer
+     * @param PropiedadRepository $propiedadRepository
      */
-    public function __construct(UbicacionPropiedad $ubicacionPropiedad, SearchTransformer $searchTranformer)
+    public function __construct(UbicacionPropiedad $ubicacionPropiedad,
+                                SearchTransformer $searchTranformer, PropiedadRepository $propiedadRepository)
     {
+        $this->propiedadRepository = $propiedadRepository;
         $this->ubicacionPropiedad = $ubicacionPropiedad;
         $this->searchService = $searchTranformer;
     }
@@ -58,14 +61,56 @@ class UbicacionPropiedadRepository extends BaseRepository
                 LEFT JOIN ubicacionpropiedad AS t2 ON t2.id_padre = t1.id_ubica
                 LEFT JOIN ubicacionpropiedad AS t3 ON t3.id_padre = t2.id_ubica 
                 LEFT JOIN ubicacionpropiedad AS t4 ON t4.id_padre = t3.id_ubica
-                WHERE t2.nombre_ubicacion != t3.nombre_ubicacion AND t0.id_padre  = 0
+                WHERE t2.nombre_ubicacion != t3.nombre_ubicacion
                 HAVING idZona = $keyword";
 
         $ubications = $this->ubicacionPropiedad->hydrateRaw($query);
 
-        $ubications = $this->searchService->searchUbicacionPropiedad($ubications, $request, $params);
+        $ubications = $this->searchUbicacionPropiedad($ubications, $request, $params);
 
         return $ubications;
+    }
+
+    /**
+     * Search property and ubications
+     *
+     * @param $ubications
+     * @param $request
+     * @return static
+     */
+    public function searchUbicacionPropiedad($ubications, $request, $params)
+    {
+        $searchValues = $this->propiedadRepository->setDefaultsValues($request);
+
+        $ubicacion = $ubications->first();
+
+        $properties = $this->getPropertiesData($ubicacion, $searchValues, $params);
+
+        $props = [
+            'ubicacion' => $ubicacion->valor,
+            'propiedades' => $properties
+        ];
+
+        return $props;
+
+    }
+
+    /**
+     * Get properties based given params
+     *
+     * @param $element
+     * @param $searchValues
+     * @param $params
+     * @return mixed
+     * @internal param PropiedadRepository $propiedadRepository
+     * @internal param $type
+     * @internal param $operation
+     */
+    private function getPropertiesData($element, $searchValues, $params)
+    {
+        $properties = $this->propiedadRepository->byPropertiesSpec($element, $searchValues, $params);
+
+        return $properties;
     }
 
     /**
@@ -95,7 +140,7 @@ class UbicacionPropiedadRepository extends BaseRepository
                 LEFT JOIN ubicacionpropiedad AS t3 ON t3.id_padre = t2.id_ubica 
                 LEFT JOIN ubicacionpropiedad AS t4 ON t4.id_padre = t3.id_ubica
                 WHERE t2.nombre_ubicacion != t3.nombre_ubicacion AND t0.id_padre  = 0 AND t3.id_ubica = $id";
-
+        
         $ubications = $this->ubicacionPropiedad->hydrateRaw($query);
 
         return $ubications;
