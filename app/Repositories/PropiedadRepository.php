@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use InfyOm\Generator\Common\BaseRepository;
 use Illuminate\Container\Container AS Application;
 use Mockery\CountValidator\Exception;
+use Tymon\JWTAuth\JWTAuth;
 
 /**
  * @property  ubicaRepo
@@ -83,7 +84,7 @@ class PropiedadRepository extends BaseRepository
         }])->find($id);
 
         $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
-
+        
         return $propiedad;
     }
     
@@ -130,9 +131,8 @@ class PropiedadRepository extends BaseRepository
         return $result;
     }
 
-    public function byIdProps($ids)
+    public function byIdProps($ids, $ubica)
     {
-
         $props = implode(",", $ids);
 
         $query = '
@@ -219,19 +219,19 @@ class PropiedadRepository extends BaseRepository
          
          WHERE p.id_prop in(' . $props . ') 
             ORDER BY
-                CASE
+                (CASE
                     WHEN p.oportunidad = 1 THEN p.oportunidad
                     WHEN p.destacado = 1 THEN p.destacado
-                END DESC';
+                END) DESC';
 
 
-        $result = $this->model->hydrateRaw($query);
-
-        $ubica = $this->ubicaRepo;
+        $result = Propiedad::hydrateRaw($query);
+        
 
         $result->map(function($element) use ($ubica) {
             $element->ubica = $ubica->getById($element->id_ubica);
         });
+
 
         return $result;
     }

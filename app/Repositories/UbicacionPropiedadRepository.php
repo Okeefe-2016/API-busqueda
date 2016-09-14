@@ -139,8 +139,8 @@ class UbicacionPropiedadRepository extends BaseRepository
                 LEFT JOIN ubicacionpropiedad AS t2 ON t2.id_padre = t1.id_ubica
                 LEFT JOIN ubicacionpropiedad AS t3 ON t3.id_padre = t2.id_ubica 
                 LEFT JOIN ubicacionpropiedad AS t4 ON t4.id_padre = t3.id_ubica
-                WHERE t2.nombre_ubicacion != t3.nombre_ubicacion AND t0.id_padre  = 0 AND t3.id_ubica = $id";
-        
+                WHERE t2.nombre_ubicacion != t3.nombre_ubicacion AND t3.id_ubica = $id";
+
         $ubications = $this->ubicacionPropiedad->hydrateRaw($query);
 
         return $ubications;

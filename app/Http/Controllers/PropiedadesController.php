@@ -28,8 +28,8 @@ class PropiedadesController extends AppBaseController
      * Display the specified Propiedades.
      *
      * @param  int $id
+     * @param UbicacionPropiedadRepository $ubica
      * @return Response
-     * @internal param UbicacionPropiedadRepository $ubica
      */
     public function show($id, UbicacionPropiedadRepository $ubica)
     {
