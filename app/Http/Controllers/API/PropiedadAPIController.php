@@ -174,7 +174,7 @@ class PropiedadAPIController extends AppBaseController
      */
     public function show($id, UbicacionPropiedadRepository $ubica)
     {
-        $propiedad = $this->propiedadesRepository->getWithUbication($ubica, $id);
+        $propiedad = $this->propiedadesRepository->getWithUbication($id, $ubica);
 
         return response()->json(['message' => 'success', 'code' => '200', 'data' => $propiedad]);
     }

@@ -10,6 +10,9 @@ use InfyOm\Generator\Common\BaseRepository;
 use Illuminate\Container\Container AS Application;
 use Mockery\CountValidator\Exception;
 
+/**
+ * @property  ubicaRepo
+ */
 class PropiedadRepository extends BaseRepository
 {
     /**
@@ -70,7 +73,7 @@ class PropiedadRepository extends BaseRepository
     /**
      * @param $id
      */
-    public function getWithUbication($id)
+    public function getWithUbication($id, $ubica)
     {
 
         $propiedad = Propiedad::with(['foto', 'propiedad_caracteristicas' => function ($q) {
@@ -79,10 +82,12 @@ class PropiedadRepository extends BaseRepository
             $q->select('id_carac', 'id_tipo_carac', 'titulo');
         }])->find($id);
 
-        $propiedad->ubica = $this->ubicaRepo->getById($propiedad->id_ubica);
+        $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
 
         return $propiedad;
     }
+    
+    
 
     /**
      * @param UbicacionPropiedad $ubica

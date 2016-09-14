@@ -31,9 +31,9 @@ class PropiedadesController extends AppBaseController
      * @return Response
      * @internal param UbicacionPropiedadRepository $ubica
      */
-    public function show($id)
+    public function show($id, UbicacionPropiedadRepository $ubica)
     {
-        $propiedad = $this->propiedadesRepository->getWithUbication($id);
+        $propiedad = $this->propiedadesRepository->getWithUbication($id, $ubica);
 
         return $propiedad;
     }
