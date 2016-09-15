@@ -133,7 +133,11 @@ class PropiedadRepository extends BaseRepository
 
     public function byIdProps($ids, $ubica)
     {
-        $props = implode(",", $ids);
+        if (is_array($ids)) {
+            $props = implode(",", $ids);
+        } else {
+            $props = $ids;
+        }
 
         $query = '
             SELECT p.id_prop,
@@ -160,10 +164,10 @@ class PropiedadRepository extends BaseRepository
                 caa.cantidad_antiguedad,
                 monv.moneda_venta,
                 mona.moneda_alq,
-                webindex.fichaweb,
-                description.descripcion,
                 valv.valor_venta,
-                vala.valor_alq,               
+                vala.valor_alq, 
+                webindex.fichaweb,
+                description.descripcion,              
                 caa.cantidad_antiguedad,
                 IF(sca.cantidad_ambientes is null, 1, sca.cantidad_ambientes) AS cantidad_ambientes,
                 e.nombre AS nombre_emprendimiento,
@@ -371,6 +375,8 @@ class PropiedadRepository extends BaseRepository
     {
         $moneyType = $this->getMoneyType($searchValues, $params);
 
+
+
         return '
           SELECT p.id_prop,
                 p.id_ubica,
@@ -418,6 +424,7 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN
             (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
                 ON p.id_prop=caa.id_prop
+       
           ' . $moneyType . '
           WHERE p.id_ubica = ' . $element->idZona . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
@@ -428,5 +435,84 @@ class PropiedadRepository extends BaseRepository
               AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '")
               AND p.tiene_emprendimiento  = ' . $searchValues['emp'] . '
           HAVING valor_convertido BETWEEN ' . $searchValues['valMin'] . ' AND ' . $searchValues['valMax'];
+    }
+
+    public function getSimilar($id, $ubica)
+    {
+        $prop  = $this->byIdProps($id, $ubica)->first();
+
+
+        $query =  '
+          SELECT p.id_prop,
+                p.id_ubica,
+                p.calle,
+                p.nro,
+                p.id_tipo_prop,
+                monv.moneda_venta,
+                mona.moneda_alq,
+                valv.valor_venta,
+                vala.valor_alq,
+                p.subtipo_prop,
+                p.tipo_oper_id,
+                p.activa,
+                p.id_sucursal,
+                p.id_emp,
+                p.compartir,
+                p.goglat,
+                p.goglong,
+                z.nombre_ubicacion,
+                t.tipo_prop,
+                st.sup_total,
+                sca.cantidad_ambientes,              
+                cco.cantidad_cocheras,
+                webindex.fichaweb,
+                caa.cantidad_antiguedad,
+                IF(sca.cantidad_ambientes is null, 0, sca.cantidad_ambientes) AS cantidad_ambientes,
+                e.nombre AS nombre_emprendimiento,
+                IF(fo.foto_principal IS NOT null, CONCAT("' . $this->publicURL . '", fo.foto_principal), "") AS foto_url
+          FROM propiedad AS p
+          INNER JOIN ubicacionpropiedad AS z ON p.id_ubica = z.id_ubica
+          INNER JOIN tipoprop AS t ON p.id_tipo_prop = t.id_tipo_prop
+          LEFT JOIN (select id_prop, foto as foto_principal from fotos where posicion = 1) as fo on p.id_prop = fo.id_prop
+          LEFT JOIN emprendimiento AS e ON p.id_emp = e.id_emp
+          LEFT JOIN
+              (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st
+                ON p.id_prop=st.id_prop
+          LEFT JOIN
+            (SELECT id_prop, contenido AS fichaweb FROM propiedad_caracteristicas WHERE id_carac = 257) AS webindex
+                ON p.id_prop=webindex.id_prop
+          LEFT JOIN
+            (SELECT id_prop, contenido AS cantidad_ambientes FROM propiedad_caracteristicas WHERE id_carac = 208) AS sca
+                ON p.id_prop=sca.id_prop
+          LEFT JOIN
+            (SELECT id_prop, contenido AS cantidad_cocheras FROM propiedad_caracteristicas WHERE id_carac = 373) AS cco
+                ON p.id_prop=cco.id_prop
+          LEFT JOIN
+            (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
+                ON p.id_prop=caa.id_prop 
+              LEFT JOIN
+		(SELECT id_prop, contenido AS moneda_venta FROM propiedad_caracteristicas WHERE id_carac=165) AS monv
+		    ON p.id_prop=monv.id_prop
+		LEFT JOIN
+		(SELECT id_prop, contenido AS valor_venta FROM propiedad_caracteristicas WHERE id_carac=161) AS valv
+		    ON p.id_prop=valv.id_prop
+          
+        LEFT JOIN
+		(SELECT id_prop, contenido AS moneda_alq FROM propiedad_caracteristicas WHERE id_carac=166) AS mona
+            ON p.id_prop=mona.id_prop
+		LEFT JOIN
+        (SELECT id_prop, contenido AS valor_alq FROM propiedad_caracteristicas WHERE id_carac=164) AS vala
+            ON p.id_prop=vala.id_prop
+         
+          WHERE p.id_ubica = ' . $prop->ubica[0]->idZona . '
+              AND p.id_prop != '. $prop->id_prop . '
+              AND p.tipo_oper_id = ' . $prop->tipo_oper_id . '
+              AND p.id_tipo_prop = ' . $prop->id_tipo_prop . '
+              AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras . '
+              AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad . '
+              AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total;
+        $result = Propiedad::hydrateRaw($query);
+
+        return $result;
     }
 }
