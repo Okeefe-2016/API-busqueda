@@ -361,6 +361,7 @@ class PropiedadRepository extends BaseRepository
                 CASE
                     WHEN p.oportunidad = 1 THEN p.oportunidad
                     WHEN p.destacado = 1 THEN p.destacado
+                    ELSE -1
                 END DESC';
     }
 
