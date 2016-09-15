@@ -349,11 +349,11 @@ class PropiedadRepository extends BaseRepository
           WHERE p.id_ubica = ' . $element->idZona . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
               AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
-              AND (cco.cantidad_cocheras = ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
-              AND (caa.cantidad_antiguedad = ' . $searchValues['ant'] . ' or caa.cantidad_antiguedad is null)
+              AND (cco.cantidad_cocheras ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
+              AND (caa.cantidad_antiguedad ' . $searchValues['ant'] . ' or caa.cantidad_antiguedad is null)
               AND (st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . ' or st.sup_total is null)
               AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '")
-              AND (sba.cantidad_banos = ' . $searchValues['banos'] . ' or sba.cantidad_banos is null)
+              AND (sba.cantidad_banos ' . $searchValues['banos'] . ' or sba.cantidad_banos is null)
               AND p.tiene_emprendimiento  = ' . $searchValues['emp'] . '
           HAVING ' . $nameFilter . ' BETWEEN ' . $searchValues['valMin'] . ' AND ' . $searchValues['valMax'] . '
               AND (cantidad_ambientes ' . $searchValues['amb'] . ' or sba.cantidad_banos is null)
@@ -429,8 +429,8 @@ class PropiedadRepository extends BaseRepository
           WHERE p.id_ubica = ' . $element->idZona . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
               AND p.id_tipo_prop = ' . $params['tipo'] . '
-              AND cco.cantidad_cocheras = ' . $searchValues['coch'] . '
-              AND caa.cantidad_antiguedad  = ' . $searchValues['ant'] . '
+              AND cco.cantidad_cocheras ' . $searchValues['coch'] . '
+              AND caa.cantidad_antiguedad ' . $searchValues['ant'] . '
               AND st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . '
               AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '")
               AND p.tiene_emprendimiento  = ' . $searchValues['emp'] . '
