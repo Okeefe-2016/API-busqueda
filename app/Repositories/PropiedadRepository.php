@@ -442,6 +442,9 @@ class PropiedadRepository extends BaseRepository
     {
         $prop  = $this->byIdProps($id, $ubica)->first();
 
+        if (is_null($prop->sup_total)) {
+            $prop->sup_total = 1000;
+        }
 
         $query =  '
           SELECT p.id_prop,
@@ -511,7 +514,7 @@ class PropiedadRepository extends BaseRepository
               AND p.id_tipo_prop = ' . $prop->id_tipo_prop . '
               AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras . '
               AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad . '
-              AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total;
+              AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total . ' LIMIT 9';
         $result = Propiedad::hydrateRaw($query);
 
         return $result;
