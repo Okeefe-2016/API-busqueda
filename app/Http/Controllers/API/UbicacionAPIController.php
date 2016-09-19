@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class UbicacionAPIController extends AppBaseController
 {
-    protected $ubicacion;
+    protected $ubicacion; 
 
     public function __construct(UbicacionRepository $ubicacion)
     {
