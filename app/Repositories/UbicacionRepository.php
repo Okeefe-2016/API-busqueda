@@ -31,7 +31,9 @@ class UbicacionRepository
                 GROUP BY idZona
                 HAVING  valor LIKE '%$zona%'
                 ORDER BY cantidad desc";
-        
+
+        \Log::info($query);
+
         $ubications = $this->ubicacion->hydrateRaw($query);
 
         return $ubications;
