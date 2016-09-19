@@ -22,8 +22,8 @@ class UbicacionRepository
             $nomedif = ' ';
         }
 
-        $query = "{$ubicationQuery}
-                LEFT JOIN propiedad AS prop 
+        $query = "{$ubicationQuery} 
+                 LEFT JOIN propiedad AS prop 
                   ON t3.id_ubica = prop.id_ubica  
                   AND prop.tipo_oper_id = $operacion AND prop.id_tipo_prop in($tipo) " . $nomedif . " 
                 WHERE t0.nombre_ubicacion != t1.nombre_ubicacion
@@ -31,7 +31,7 @@ class UbicacionRepository
                 GROUP BY idZona
                 HAVING  valor LIKE '%$zona%'
                 ORDER BY cantidad desc";
-
+        
         $ubications = $this->ubicacion->hydrateRaw($query);
 
         return $ubications;
