@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class UbicacionAPIController extends AppBaseController
 {
-    protected $ubicacion; 
+    protected $ubicacion;
 
     public function __construct(UbicacionRepository $ubicacion)
     {
@@ -48,6 +48,6 @@ class UbicacionAPIController extends AppBaseController
 
         $ubications = $this->ubicacion->getByParams($request, $zona, $tipo, $operacion);
 
-        return $this->sendResponse($ubications, '');
+        return response($ubications);
     }
 }
