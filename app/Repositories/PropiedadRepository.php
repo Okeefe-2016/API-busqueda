@@ -446,6 +446,8 @@ class PropiedadRepository extends BaseRepository
             $prop->sup_total = 1000;
         }
 
+        $prop->sup_total = (int)$prop->sup_total;
+
         $idZona = $prop->id_ubica;
 
 
