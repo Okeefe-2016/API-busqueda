@@ -40,7 +40,8 @@ class UbicacionPropiedadAPIController extends AppBaseController
             }
         }
 
-        $params =  ['tipo' => $tipo, 'operacion' => $operacion];
+
+        $params =  ['tipo' => $tipo, 'operacion' => $operacion, 'ubicacion' => $request->ubicacion];
 
         $result = $this->ubicacionPropiedadRepository
             ->getParentWithChildsQuery($request, $params);

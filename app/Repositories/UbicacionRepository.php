@@ -20,7 +20,7 @@ class UbicacionRepository
                 LEFT JOIN propiedad AS prop 
                   ON t3.id_ubica = prop.id_ubica  
                   AND prop.tipo_oper_id = $operacion AND prop.id_tipo_prop in($tipo)
-                WHERE t1.nombre_ubicacion != t2.nombre_ubicacion
+                WHERE t0.nombre_ubicacion != t1.nombre_ubicacion
                   AND t4.nombre_ubicacion $request->emp
                 GROUP BY idZona
                 HAVING  valor LIKE '%$zona%'

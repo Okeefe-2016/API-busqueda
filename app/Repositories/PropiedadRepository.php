@@ -268,6 +268,14 @@ class PropiedadRepository extends BaseRepository
 				  LEFT JOIN
 				    (SELECT id_prop, contenido AS valor FROM propiedad_caracteristicas WHERE id_carac=164) AS val
 				        ON p.id_prop=val.id_prop";
+        } else {
+            $moneyType = "
+                 LEFT JOIN
+				    (SELECT id_prop, contenido AS moneda FROM propiedad_caracteristicas WHERE id_carac=166) AS mon
+				        ON p.id_prop=mon.id_prop
+				  LEFT JOIN
+				    (SELECT id_prop, contenido AS valor FROM propiedad_caracteristicas WHERE id_carac=164) AS val
+				        ON p.id_prop=val.id_prop";
         }
 
         return $moneyType;
@@ -284,7 +292,7 @@ class PropiedadRepository extends BaseRepository
     {
         $moneyType = $this->getMoneyType($searchValues, $params);
         $nameFilter = $searchValues['filtroMon'] == 'ARS' ? 'valor_convertido' : 'valor';
-
+        
         return '
           SELECT p.id_prop,
                 p.id_ubica,
@@ -346,7 +354,7 @@ class PropiedadRepository extends BaseRepository
             (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
                 ON p.id_prop=caa.id_prop
           ' . $moneyType . '
-          WHERE p.id_ubica = ' . $element->idZona . '
+          WHERE p.id_ubica = ' . $params['ubicacion']. '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
               AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
               AND (cco.cantidad_cocheras ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
@@ -457,7 +465,10 @@ class PropiedadRepository extends BaseRepository
 
 
         if ($result->count() < 3) {
-            $idZona = UbicacionPropiedad::find($idZona)->id_padre;
+            $idPadre = UbicacionPropiedad::find($idZona)->id_padre;
+            $idPadre = UbicacionPropiedad::where('id_ubica', $idPadre)->lists('id_ubica')->toArray();
+
+            $idZona = implode(',', $idPadre);
 
             $query = $this->similarQuery($idZona, $prop);
 
@@ -540,7 +551,7 @@ class PropiedadRepository extends BaseRepository
         (SELECT id_prop, contenido AS valor_alq FROM propiedad_caracteristicas WHERE id_carac=164) AS vala
             ON p.id_prop=vala.id_prop
          
-          WHERE p.id_ubica = ' . $idZona . '
+          WHERE p.id_ubica in(' . $idZona . ')
               AND p.id_prop != ' . $prop->id_prop . '
               AND p.tipo_oper_id = ' . $prop->tipo_oper_id . '
               AND p.id_tipo_prop = ' . $prop->id_tipo_prop . '

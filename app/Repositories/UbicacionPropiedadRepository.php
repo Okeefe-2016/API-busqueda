@@ -84,7 +84,7 @@ class UbicacionPropiedadRepository extends BaseRepository
 
         $ubicacion = $ubications->first();
 
-        $properties = $this->getPropertiesData($ubicacion, $searchValues, $params);
+        $properties = $this->getPropertiesData($ubicacion, $searchValues, $params, $request);
 
         $props = [
             'ubicacion' => $ubicacion->valor,
@@ -106,9 +106,9 @@ class UbicacionPropiedadRepository extends BaseRepository
      * @internal param $type
      * @internal param $operation
      */
-    private function getPropertiesData($element, $searchValues, $params)
+    private function getPropertiesData($element, $searchValues, $params, $request)
     {
-        $properties = $this->propiedadRepository->byPropertiesSpec($element, $searchValues, $params);
+        $properties = $this->propiedadRepository->byPropertiesSpec($element, $searchValues, $params, $request);
 
         return $properties;
     }
