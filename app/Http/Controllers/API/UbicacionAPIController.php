@@ -47,7 +47,7 @@ class UbicacionAPIController extends AppBaseController
         }
 
         $ubications = $this->ubicacion->getByParams($request, $zona, $tipo, $operacion);
-
-        return response($ubications);
+        \Log::info($ubications);
+        return $this->sendResponse($ubications, '');
     }
 }
