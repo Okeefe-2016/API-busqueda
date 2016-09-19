@@ -462,6 +462,10 @@ class PropiedadRepository extends BaseRepository
             $result = Propiedad::hydrateRaw($query);
         }
 
+        $result->map(function($element) use ($ubica) {
+            $element->ubica = $ubica->getById($element->id_ubica);
+        });
+
         return $result;
     }
 
