@@ -446,7 +446,8 @@ class PropiedadRepository extends BaseRepository
             $prop->sup_total = 1000;
         }
 
-        $idZona = $prop->ubica[0]->idZona || $prop->id_ubica;
+        $idZona = $prop->id_ubica;
+
 
         $query = $this->similarQuery($idZona, $prop);
 
