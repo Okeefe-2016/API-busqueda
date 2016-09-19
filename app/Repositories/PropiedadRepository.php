@@ -453,14 +453,14 @@ class PropiedadRepository extends BaseRepository
         $result = Propiedad::hydrateRaw($query);
 
 
-        if ($result->count() <= 3) {
+        if ($result->count() < 3) {
             $idZona = UbicacionPropiedad::find($idZona)->id_padre;
 
             $query = $this->similarQuery($idZona, $prop);
 
             $result = Propiedad::hydrateRaw($query);
         }
-        
+
         return $result;
     }
 
