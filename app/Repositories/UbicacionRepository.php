@@ -34,7 +34,7 @@ class UbicacionRepository
 
 
         $ubications = $this->ubicacion->hydrateRaw($query);
-
+        \Log::info($ubications);
         return $ubications;
     }
 
