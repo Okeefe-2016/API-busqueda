@@ -446,7 +446,32 @@ class PropiedadRepository extends BaseRepository
             $prop->sup_total = 1000;
         }
 
-        $query =  '
+        $idZona = $prop->ubica[0]->idZona;
+
+        $query = $this->similarQuery($idZona, $prop);
+
+        $result = Propiedad::hydrateRaw($query);
+
+
+        if ($result->count() <= 3) {
+            $idZona = UbicacionPropiedad::find($idZona)->id_padre;
+
+            $query = $this->similarQuery($idZona, $prop);
+
+            $result = Propiedad::hydrateRaw($query);
+        }
+        
+        return $result;
+    }
+
+    /**
+     * @param $idZona
+     * @param $prop
+     * @return string
+     */
+    public function similarQuery($idZona, $prop)
+    {
+        return '
           SELECT p.id_prop,
                 p.id_ubica,
                 p.calle,
@@ -508,15 +533,12 @@ class PropiedadRepository extends BaseRepository
         (SELECT id_prop, contenido AS valor_alq FROM propiedad_caracteristicas WHERE id_carac=164) AS vala
             ON p.id_prop=vala.id_prop
          
-          WHERE p.id_ubica = ' . $prop->ubica[0]->idZona . '
-              AND p.id_prop != '. $prop->id_prop . '
+          WHERE p.id_ubica = ' . $idZona . '
+              AND p.id_prop != ' . $prop->id_prop . '
               AND p.tipo_oper_id = ' . $prop->tipo_oper_id . '
               AND p.id_tipo_prop = ' . $prop->id_tipo_prop . '
               AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras . '
               AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad . '
               AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total . ' LIMIT 9';
-        $result = Propiedad::hydrateRaw($query);
-
-        return $result;
     }
 }
