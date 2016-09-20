@@ -25,3 +25,5 @@ Route::get('propiedades/{tipo}/{operacion}', 'UbicacionPropiedadAPIController@ge
 
 Route::get('ubicacion/{zona}/{tipo}/{operacion}', 'UbicacionAPIController@index');
 
+Route::get('emprendimientos', 'EmprendimientoAPIController@index');
+
