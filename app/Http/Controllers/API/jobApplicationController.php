@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -8,10 +8,6 @@ use App\Http\Requests;
 
 class jobApplicationController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('\Barryvdh\Cors\HandleCors::class');
-    }
 
     public function index(Request $request)
     {
