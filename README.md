@@ -189,6 +189,9 @@ conversión en pesos. La converción es dinamica al valor del dia segun BCRA.
 Esta disponible la busqueda individual de propiedades con sus caracteristicas
 `/api/v1/propiedad/{id_prop}`
 
+## Obtener emprendimientos destacados
+`/api/v1/emprendimientos`
+
 
 
 

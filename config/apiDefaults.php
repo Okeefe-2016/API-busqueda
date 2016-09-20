@@ -18,7 +18,7 @@ return [
 
     // Valores con opciones
     'moneda' => [
-        'options' => ['U$S', '$']
+        'options' => ['U$S', '$', ' $ ']
     ],
 
     // Los valores que tienen true se reflejan como < 100 en el query y la consulta especifica como,

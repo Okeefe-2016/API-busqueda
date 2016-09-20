@@ -9,5 +9,6 @@ class UbicacionPropiedad extends Model
     protected $table = 'ubicacionpropiedad';
 
     protected $primaryKey = 'id_ubica';
-    
+
+    public $timestamps = false;
 }
