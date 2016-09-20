@@ -26,9 +26,8 @@ class jobApplicationController extends AppBaseController
     {
         return Mail::send('emails.jobApp',['data'=> $request], function($message) use ($request) {
             $message->from('admin@okeefe.com.ar', 'Sitio Okeefe');
-            //$message->to('juancruz@okeefe.com.ar')->subject('Nuevo aplicante  a través de www.okeefe.com.ar');
-            //$message->to('lucia@lyncros.com')->subject('Nuevo aplicante  a través de www.okeefe.com.ar');
-            $message->to('sebasnavarrete.2@gmail.com')->subject('Nuevo aplicante  a través de www.okeefe.com.ar');
+            $message->to('juancruz@okeefe.com.ar')->subject('Nuevo aplicante  a través de www.okeefe.com.ar');
+            $message->to('lucia@lyncros.com')->subject('Nuevo aplicante  a través de www.okeefe.com.ar');
             if ($request->hasFile('file')) {
                 $message->attach($request->file->getRealPath(), array(
                         'as' => $request->file->getClientOriginalName().'.'.$request->file->getClientOriginalExtension(),
