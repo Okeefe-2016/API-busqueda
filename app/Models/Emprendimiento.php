@@ -24,6 +24,8 @@ class Emprendimiento extends Model
 
         $ubicacion = UbicacionPropiedad::where('nombre_ubicacion', $nombre)->first();
 
-        return $ubicacion->id_ubica;
+        if ($ubicacion->count()) {
+            return $ubicacion->id_ubica;
+        }
     }
 }
