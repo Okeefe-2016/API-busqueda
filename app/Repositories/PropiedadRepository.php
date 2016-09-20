@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Emprendimiento;
 use App\Models\Propiedad;
 use App\Models\UbicacionPropiedad;
 use App\Services\CotizationService;
@@ -292,7 +293,29 @@ class PropiedadRepository extends BaseRepository
     {
         $moneyType = $this->getMoneyType($searchValues, $params);
         $nameFilter = $searchValues['filtroMon'] == 'ARS' ? 'valor_convertido' : 'valor';
-        
+
+        $whereQuery = ' WHERE ';
+
+        if ($searchValues['emp'] == 1) {
+
+            if (!isset($element->zona_emprendimiento)) {
+                $queryString = $element->subzona;
+                $id_emp = Emprendimiento::where('nombre', $queryString)->first()->id_emp;
+
+                $id_emp = ' p.id_emp = '. $id_emp;
+
+            } else {
+                $queryString = $element->zona_emprendimiento;
+                $id_emp = Emprendimiento::where('nombre', $queryString)->first()->id_emp;
+
+                $id_emp = ' p.id_emp = '. $id_emp;
+
+            }
+        } else {
+            $whereQuery = ' WHERE p.id_ubica = ' . $params['ubicacion'] . ' ';
+            $id_emp = ' ';
+        }
+
         return '
           SELECT p.id_prop,
                 p.id_ubica,
@@ -307,6 +330,7 @@ class PropiedadRepository extends BaseRepository
                 p.id_sucursal,
                 p.id_emp,
                 p.compartir,
+                p.nomedif,
                 p.goglat,
                 p.goglong,
                 z.nombre_ubicacion,
@@ -353,8 +377,7 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN
             (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
                 ON p.id_prop=caa.id_prop
-          ' . $moneyType . '
-          WHERE p.id_ubica = ' . $params['ubicacion']. '
+          ' . $moneyType .  $whereQuery .  $id_emp . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
               AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
               AND (cco.cantidad_cocheras ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
@@ -362,7 +385,7 @@ class PropiedadRepository extends BaseRepository
               AND (st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . ' or st.sup_total is null)
               AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '")
               AND (sba.cantidad_banos ' . $searchValues['banos'] . ' or sba.cantidad_banos is null)
-              AND p.tiene_emprendimiento  = ' . $searchValues['emp'] . '
+              AND p.tiene_emprendimiento  = ' . $searchValues['emp']  . '
           HAVING ' . $nameFilter . ' BETWEEN ' . $searchValues['valMin'] . ' AND ' . $searchValues['valMax'] . '
               AND (cantidad_ambientes ' . $searchValues['amb'] . ' or sba.cantidad_banos is null)
           ORDER BY
@@ -371,6 +394,7 @@ class PropiedadRepository extends BaseRepository
                     WHEN p.destacado = 1 THEN p.destacado
                     ELSE -1
                 END DESC';
+
     }
 
     /**
