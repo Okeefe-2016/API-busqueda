@@ -35,4 +35,4 @@ Route::group(['prefix' => 'api/v1', 'middleware' => '\Barryvdh\Cors\HandleCors::
         Route::get('propiedad/{id}', 'PropiedadesController@show');
     });
 
-Route::resource('jobApplication', 'jobApplicationController', []);
+Route::resource('jobApplication', 'jobApplicationController', [])->middleware('\Barryvdh\Cors\HandleCors::class');
