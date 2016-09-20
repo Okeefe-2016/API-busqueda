@@ -24,7 +24,6 @@ class jobApplicationController extends AppBaseController
 
     public function store(Request $request)
     {
-        //return $request->file->getClientOriginalName();
         return Mail::send('emails.jobApp',['data'=> $request], function($message) use ($request) {
             $message->from('admin@okeefe.com.ar', 'Sitio Okeefe');
             //$message->to('juancruz@okeefe.com.ar')->subject('Nuevo aplicante  a través de www.okeefe.com.ar');
