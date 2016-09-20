@@ -32,7 +32,6 @@ Route::group(['prefix' => 'api', 'namespace' => 'API', 'middleware' => '\Barryvd
 
 Route::group(['prefix' => 'api/v1', 'middleware' => '\Barryvdh\Cors\HandleCors::class'],
     function () {
-        Route::resource('jobApplication', 'jobApplicationController', []);
         Route::get('propiedad/{id}', 'PropiedadesController@show');
     });
 
