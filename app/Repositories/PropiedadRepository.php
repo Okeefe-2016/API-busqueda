@@ -126,7 +126,7 @@ class PropiedadRepository extends BaseRepository
         } else {
             $query = $this->getPropiedadByRuralQuery($element, $searchValues, $params);
         }
-
+        
         $result = Propiedad::hydrateRaw($query);
 
         return $result;
@@ -383,7 +383,7 @@ class PropiedadRepository extends BaseRepository
               AND (cco.cantidad_cocheras ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
               AND (caa.cantidad_antiguedad ' . $searchValues['ant'] . ' or caa.cantidad_antiguedad is null)
               AND (st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . ' or st.sup_total is null)
-              AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '")
+              AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '","' . $searchValues['moneda'][2] . '")
               AND (sba.cantidad_banos ' . $searchValues['banos'] . ' or sba.cantidad_banos is null)
               AND p.tiene_emprendimiento  = ' . $searchValues['emp']  . '
           HAVING ' . $nameFilter . ' BETWEEN ' . $searchValues['valMin'] . ' AND ' . $searchValues['valMax'] . '
