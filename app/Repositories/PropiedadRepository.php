@@ -612,6 +612,6 @@ class PropiedadRepository extends BaseRepository
 
     private function getColumsJoins()
     {
-        return 'eam.amenities, epr.proyecto, ete.terminaciones, eun.unidades';
+        return 'eam.amenities, epr.proyecto, ete.terminaciones, eun.unidades,';
     }
 }
