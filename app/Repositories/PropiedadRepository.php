@@ -298,6 +298,9 @@ class PropiedadRepository extends BaseRepository
 
         if ($searchValues['emp'] == 1) {
 
+            $joinsEmp = $this->getJoinsEmp();
+            $joinsColumns = $this->getColumsJoins();
+
             if (!isset($element->zona_emprendimiento)) {
                 $queryString = $element->subzona;
                 $id_emp = Emprendimiento::where('nombre', $queryString)->first()->id_emp;
@@ -314,6 +317,9 @@ class PropiedadRepository extends BaseRepository
         } else {
             $whereQuery = ' WHERE p.id_ubica = ' . $params['ubicacion'] . ' ';
             $id_emp = ' ';
+
+            $joinsColumns = ' ';
+            $joinsEmp = ' ';
         }
 
         return '
@@ -343,6 +349,7 @@ class PropiedadRepository extends BaseRepository
                 mon.moneda,
                 webindex.fichaweb,
                 val.valor,
+                '. $joinsColumns .'
                 IF(mon.moneda = "U$S", val.valor * 14, val.valor) AS valor_convertido,
                 caa.cantidad_antiguedad,
                 IF(sca.cantidad_ambientes is null, 1, sca.cantidad_ambientes) AS cantidad_ambientes,
@@ -376,7 +383,10 @@ class PropiedadRepository extends BaseRepository
                 ON p.id_prop=cco.id_prop
           LEFT JOIN
             (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
-                ON p.id_prop=caa.id_prop
+                ON p.id_prop=caa.id_prop 
+          
+          '. $joinsEmp .'
+          
           ' . $moneyType .  $whereQuery .  $id_emp . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
               AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
@@ -582,5 +592,26 @@ class PropiedadRepository extends BaseRepository
               AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras . '
               AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad . '
               AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total . ' LIMIT 9';
+    }
+
+    private function getJoinsEmp()
+    {
+        return 'LEFT JOIN
+            (SELECT id_emp, contenido AS amenities FROM emprendimiento_caracteristicas WHERE id_carac = 71) AS eam
+                ON p.id_emp=eam.id_emp '
+            .' LEFT JOIN
+            (SELECT id_emp, contenido AS proyecto FROM emprendimiento_caracteristicas WHERE id_carac = 72) AS epr
+                ON p.id_emp=epr.id_emp '
+            . ' LEFT JOIN
+            (SELECT id_emp, contenido AS terminaciones FROM emprendimiento_caracteristicas WHERE id_carac = 73) AS ete
+                ON p.id_emp=ete.id_emp '
+            . 'LEFT JOIN
+            (SELECT id_emp, contenido AS unidades FROM emprendimiento_caracteristicas WHERE id_carac = 74) AS eun
+                ON p.id_emp=eun.id_emp';
+    }
+
+    private function getColumsJoins()
+    {
+        return 'eam.amenities, epr.proyecto, ete.terminaciones, eun.unidades';
     }
 }

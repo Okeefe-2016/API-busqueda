@@ -10,6 +10,14 @@ class Emprendimiento extends Model
 
     protected $primaryKey = 'id_emp';
 
+    /**
+     * @return mixed
+     */
+    public function propiedad()
+    {
+        return $this->hasMany(Propiedad::class, 'id_emp', 'id_emp');
+    }
+
     public function getFotoAttribute()
     {
         return env('PUBLIC_URL') . $this->attributes['foto'];

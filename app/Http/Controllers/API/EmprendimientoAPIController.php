@@ -21,8 +21,8 @@ class EmprendimientoAPIController extends AppBaseController
      */
     public function index()
     {
-        $propiedad = Emprendimiento::all();
-        
-        return $this->sendResponse($propiedad, '');
+        $emprendimiento = Emprendimiento::all();
+
+        return $emprendimiento;
     }
 }
