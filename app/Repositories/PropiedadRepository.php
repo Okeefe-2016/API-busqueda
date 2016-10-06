@@ -65,7 +65,7 @@ class PropiedadRepository extends BaseRepository
             }
 
             if (is_array($searchValues[$item])) {
-                $searchValues[$item] =  config("apiDefaults.{$item}.options");
+                $searchValues[$item] = config("apiDefaults.{$item}.options");
             }
         }
 
@@ -85,11 +85,10 @@ class PropiedadRepository extends BaseRepository
         }])->find($id);
 
         $propiedad->ubica = $ubica->getById($propiedad->id_ubica);
-        
+
         return $propiedad;
     }
-    
-    
+
 
     /**
      * @param UbicacionPropiedad $ubica
@@ -126,7 +125,7 @@ class PropiedadRepository extends BaseRepository
         } else {
             $query = $this->getPropiedadByRuralQuery($element, $searchValues, $params);
         }
-        
+
         $result = Propiedad::hydrateRaw($query);
 
         return $result;
@@ -231,9 +230,9 @@ class PropiedadRepository extends BaseRepository
 
 
         $result = Propiedad::hydrateRaw($query);
-        
 
-        $result->map(function($element) use ($ubica) {
+
+        $result->map(function ($element) use ($ubica) {
             $element->ubica = $ubica->getById($element->id_ubica);
         });
 
@@ -305,13 +304,13 @@ class PropiedadRepository extends BaseRepository
                 $queryString = $element->subzona;
                 $id_emp = Emprendimiento::where('nombre', $queryString)->first()->id_emp;
 
-                $id_emp = ' p.id_emp = '. $id_emp;
+                $id_emp = ' p.id_emp = ' . $id_emp;
 
             } else {
                 $queryString = $element->zona_emprendimiento;
                 $id_emp = Emprendimiento::where('nombre', $queryString)->first()->id_emp;
 
-                $id_emp = ' p.id_emp = '. $id_emp;
+                $id_emp = ' p.id_emp = ' . $id_emp;
 
             }
         } else {
@@ -349,7 +348,7 @@ class PropiedadRepository extends BaseRepository
                 mon.moneda,
                 webindex.fichaweb,
                 val.valor,
-                '. $joinsColumns .'
+                ' . $joinsColumns . '
                 IF(mon.moneda = "U$S", val.valor * 14, val.valor) AS valor_convertido,
                 caa.cantidad_antiguedad,
                 IF(sca.cantidad_ambientes is null, 1, sca.cantidad_ambientes) AS cantidad_ambientes,
@@ -385,17 +384,18 @@ class PropiedadRepository extends BaseRepository
             (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
                 ON p.id_prop=caa.id_prop 
           
-          '. $joinsEmp .'
+          ' . $joinsEmp . '
           
-          ' . $moneyType .  $whereQuery .  $id_emp . '
+          ' . $moneyType . $whereQuery . $id_emp . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
+              AND p.activa = 1
               AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
               AND (cco.cantidad_cocheras ' . $searchValues['coch'] . ' or cco.cantidad_cocheras is null)
               AND (caa.cantidad_antiguedad ' . $searchValues['ant'] . ' or caa.cantidad_antiguedad is null)
               AND (st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . ' or st.sup_total is null)
               AND mon.moneda IN ("' . $searchValues['moneda'][0] . '", "' . $searchValues['moneda'][1] . '","' . $searchValues['moneda'][2] . '")
               AND (sba.cantidad_banos ' . $searchValues['banos'] . ' or sba.cantidad_banos is null)
-              AND p.tiene_emprendimiento  = ' . $searchValues['emp']  . '
+              AND p.tiene_emprendimiento  = ' . $searchValues['emp'] . '
           HAVING ' . $nameFilter . ' BETWEEN ' . $searchValues['valMin'] . ' AND ' . $searchValues['valMax'] . '
               AND (cantidad_ambientes ' . $searchValues['amb'] . ' or sba.cantidad_banos is null)
           ORDER BY
@@ -417,7 +417,6 @@ class PropiedadRepository extends BaseRepository
     private function getPropiedadByRuralQuery($element, $searchValues, $params)
     {
         $moneyType = $this->getMoneyType($searchValues, $params);
-
 
 
         return '
@@ -482,7 +481,7 @@ class PropiedadRepository extends BaseRepository
 
     public function getSimilar($id, $ubica)
     {
-        $prop  = $this->byIdProps($id, $ubica)->first();
+        $prop = $this->byIdProps($id, $ubica)->first();
 
         if (is_null($prop->sup_total)) {
             $prop->sup_total = 1000;
@@ -509,7 +508,7 @@ class PropiedadRepository extends BaseRepository
             $result = Propiedad::hydrateRaw($query);
         }
 
-        $result->map(function($element) use ($ubica) {
+        $result->map(function ($element) use ($ubica) {
             $element->ubica = $ubica->getById($element->id_ubica);
         });
 
@@ -523,8 +522,7 @@ class PropiedadRepository extends BaseRepository
      */
     public function similarQuery($idZona, $prop)
     {
-        return '
-          SELECT p.id_prop,
+        $query = 'SELECT p.id_prop,
                 p.id_ubica,
                 p.calle,
                 p.nro,
@@ -586,12 +584,17 @@ class PropiedadRepository extends BaseRepository
             ON p.id_prop=vala.id_prop
          
           WHERE p.id_ubica in(' . $idZona . ')
-              AND p.id_prop != ' . $prop->id_prop . '
-              AND p.tipo_oper_id = ' . $prop->tipo_oper_id . '
-              AND p.id_tipo_prop = ' . $prop->id_tipo_prop . '
-              AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras . '
-              AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad . '
-              AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total . ' LIMIT 9';
+          AND p.id_prop != ' . $prop->id_prop.'
+        AND p.tipo_oper_id = ' . $prop->tipo_oper_id . '
+        AND p.id_tipo_prop = ' . $prop->id_tipo_prop;
+        if($prop->cantidad_cocheras)
+            $query .= ' AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras;
+        if($prop->cantidad_antiguedad)
+            $query .= ' AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad;
+        if($prop->sup_total)
+            $query .= ' AND st.sup_total BETWEEN 0 AND '. $prop->sup_total . ' LIMIT 9';
+
+        return $query;
     }
 
     private function getJoinsEmp()
@@ -599,13 +602,13 @@ class PropiedadRepository extends BaseRepository
         return 'LEFT JOIN
             (SELECT id_emp, contenido AS amenities FROM emprendimiento_caracteristicas WHERE id_carac = 71) AS eam
                 ON p.id_emp=eam.id_emp '
-            .' LEFT JOIN
+        . ' LEFT JOIN
             (SELECT id_emp, contenido AS proyecto FROM emprendimiento_caracteristicas WHERE id_carac = 72) AS epr
                 ON p.id_emp=epr.id_emp '
-            . ' LEFT JOIN
+        . ' LEFT JOIN
             (SELECT id_emp, contenido AS terminaciones FROM emprendimiento_caracteristicas WHERE id_carac = 73) AS ete
                 ON p.id_emp=ete.id_emp '
-            . 'LEFT JOIN
+        . 'LEFT JOIN
             (SELECT id_emp, contenido AS unidades FROM emprendimiento_caracteristicas WHERE id_carac = 74) AS eun
                 ON p.id_emp=eun.id_emp';
     }
