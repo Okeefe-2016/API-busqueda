@@ -181,7 +181,6 @@ class PropiedadRepository extends BaseRepository
         INNER JOIN tipoprop AS t ON p.id_tipo_prop = t.id_tipo_prop
         LEFT JOIN (select id_prop, foto as foto_principal from fotos where posicion = 1) as fo on p.id_prop = fo.id_prop
         LEFT JOIN emprendimiento AS e ON p.id_emp = e.id_emp 
-                  
         LEFT JOIN
         (SELECT id_prop, contenido AS descripcion FROM propiedad_caracteristicas WHERE id_carac = 198) AS description
                 ON p.id_prop=description.id_prop 
@@ -340,6 +339,8 @@ class PropiedadRepository extends BaseRepository
                 p.goglong,
                 z.nombre_ubicacion,
                 t.tipo_prop,
+                des.descripcion,
+                desweb.descripcionweb,
                 st.sup_total,
                 sca.cantidad_ambientes,
                 sba.cantidad_banos,
@@ -363,6 +364,12 @@ class PropiedadRepository extends BaseRepository
           INNER JOIN tipoprop AS t ON p.id_tipo_prop = t.id_tipo_prop
           LEFT JOIN (select id_prop, foto as foto_principal from fotos where posicion = 1) as fo on p.id_prop = fo.id_prop
           LEFT JOIN emprendimiento AS e ON p.id_emp = e.id_emp
+          LEFT JOIN
+              (SELECT id_prop, contenido AS descripcion FROM propiedad_caracteristicas WHERE id_carac = 110) AS des
+                ON p.id_prop=des.id_prop
+          LEFT JOIN
+              (SELECT id_prop, contenido AS descripcionweb FROM propiedad_caracteristicas WHERE id_carac = 255) AS desweb
+                ON p.id_prop=desweb.id_prop
           LEFT JOIN
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st
                 ON p.id_prop=st.id_prop
@@ -435,6 +442,7 @@ class PropiedadRepository extends BaseRepository
                 p.goglong,
                 z.nombre_ubicacion,
                 t.tipo_prop,
+                des.descripcion,
                 st.sup_total,
                 sca.cantidad_ambientes,
                 mon.moneda,
@@ -451,6 +459,9 @@ class PropiedadRepository extends BaseRepository
           INNER JOIN tipoprop AS t ON p.id_tipo_prop = t.id_tipo_prop
           LEFT JOIN (select id_prop, foto as foto_principal from fotos where posicion = 1) as fo on p.id_prop = fo.id_prop
           LEFT JOIN emprendimiento AS e ON p.id_emp = e.id_emp
+          LEFT JOIN
+              (SELECT id_prop, contenido AS descripcion FROM propiedad_caracteristicas WHERE id_carac = 110) AS des
+                ON p.id_prop=des.id_prop
           LEFT JOIN
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st
                 ON p.id_prop=st.id_prop
@@ -541,6 +552,7 @@ class PropiedadRepository extends BaseRepository
                 p.goglong,
                 z.nombre_ubicacion,
                 t.tipo_prop,
+                des.descripcion,
                 st.sup_total,
                 sca.cantidad_ambientes,              
                 cco.cantidad_cocheras,
@@ -554,6 +566,9 @@ class PropiedadRepository extends BaseRepository
           INNER JOIN tipoprop AS t ON p.id_tipo_prop = t.id_tipo_prop
           LEFT JOIN (select id_prop, foto as foto_principal from fotos where posicion = 1) as fo on p.id_prop = fo.id_prop
           LEFT JOIN emprendimiento AS e ON p.id_emp = e.id_emp
+          LEFT JOIN
+              (SELECT id_prop, contenido AS descripcion FROM propiedad_caracteristicas WHERE id_carac = 110) AS des
+                ON p.id_prop=des.id_prop
           LEFT JOIN
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st
                 ON p.id_prop=st.id_prop

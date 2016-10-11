@@ -16,7 +16,7 @@ class UbicacionRepository
     {
         $ubicationQuery = $this->getUbicationQuery();
 
-        if ($request->emp == ' is not null') {
+        if (!$request->rural && $request->emp == ' is not null') {
             $nomedif = 'AND  prop.nomedif = t4.nombre_ubicacion';
         } else {
             $nomedif = ' ';
@@ -26,14 +26,17 @@ class UbicacionRepository
                  LEFT JOIN propiedad AS prop 
                   ON t3.id_ubica = prop.id_ubica  
                   AND prop.tipo_oper_id = $operacion AND prop.id_tipo_prop in($tipo) " . $nomedif . " 
-                WHERE t0.nombre_ubicacion != t1.nombre_ubicacion
-                  AND t4.nombre_ubicacion $request->emp
-                  AND prop.activa = 1
+                WHERE t0.nombre_ubicacion != t1.nombre_ubicacion";
+        if (!$request->rural) {
+            $query .= " AND t4.nombre_ubicacion $request->emp";
+        }
+        $query .= "  AND prop.activa = 1
                 GROUP BY idZona
                 HAVING  valor LIKE '%$zona%'
                   AND COUNT(prop.id_prop) > 0
                 ORDER BY cantidad desc";
-        
+
+
         $ubications = UbicacionPropiedad::hydrateRaw($query);
 
         return $ubications;
