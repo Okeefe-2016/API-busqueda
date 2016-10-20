@@ -443,6 +443,7 @@ class PropiedadRepository extends BaseRepository
                 z.nombre_ubicacion,
                 t.tipo_prop,
                 des.descripcion,
+                desweb.descripcionweb,
                 st.sup_total,
                 sca.cantidad_ambientes,
                 mon.moneda,
@@ -462,6 +463,9 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN
               (SELECT id_prop, contenido AS descripcion FROM propiedad_caracteristicas WHERE id_carac = 110) AS des
                 ON p.id_prop=des.id_prop
+           LEFT JOIN
+              (SELECT id_prop, contenido AS descripcionweb FROM propiedad_caracteristicas WHERE id_carac = 255) AS desweb
+                ON p.id_prop=desweb.id_prop
           LEFT JOIN
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st
                 ON p.id_prop=st.id_prop
@@ -477,11 +481,10 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN
             (SELECT id_prop, contenido AS cantidad_antiguedad FROM propiedad_caracteristicas WHERE id_carac = 374) AS caa
                 ON p.id_prop=caa.id_prop
-       
           ' . $moneyType . '
           WHERE p.id_ubica = ' . $element->idZona . '
               AND p.tipo_oper_id = "' . $params['operacion'] . '"
-              AND p.id_tipo_prop = ' . $params['tipo'] . '
+              AND  p.id_tipo_prop IN (' . $params['tipo'] . ')
               AND cco.cantidad_cocheras ' . $searchValues['coch'] . '
               AND caa.cantidad_antiguedad ' . $searchValues['ant'] . '
               AND st.sup_total BETWEEN ' . $searchValues['supMin'] . ' AND ' . $searchValues['supMax'] . '
@@ -553,6 +556,7 @@ class PropiedadRepository extends BaseRepository
                 z.nombre_ubicacion,
                 t.tipo_prop,
                 des.descripcion,
+                desweb.descripcionweb,
                 st.sup_total,
                 sca.cantidad_ambientes,              
                 cco.cantidad_cocheras,
@@ -569,6 +573,9 @@ class PropiedadRepository extends BaseRepository
           LEFT JOIN
               (SELECT id_prop, contenido AS descripcion FROM propiedad_caracteristicas WHERE id_carac = 110) AS des
                 ON p.id_prop=des.id_prop
+          LEFT JOIN
+              (SELECT id_prop, contenido AS descripcionweb FROM propiedad_caracteristicas WHERE id_carac = 255) AS desweb
+                ON p.id_prop=desweb.id_prop
           LEFT JOIN
               (SELECT id_prop, contenido AS sup_total FROM propiedad_caracteristicas WHERE id_carac = 198) AS st
                 ON p.id_prop=st.id_prop
@@ -599,15 +606,15 @@ class PropiedadRepository extends BaseRepository
             ON p.id_prop=vala.id_prop
          
           WHERE p.id_ubica in(' . $idZona . ')
-          AND p.id_prop != ' . $prop->id_prop.'
+          AND p.id_prop != ' . $prop->id_prop . '
         AND p.tipo_oper_id = ' . $prop->tipo_oper_id . '
         AND p.id_tipo_prop = ' . $prop->id_tipo_prop;
-        if($prop->cantidad_cocheras)
+        if ($prop->cantidad_cocheras)
             $query .= ' AND cco.cantidad_cocheras = ' . $prop->cantidad_cocheras;
-        if($prop->cantidad_antiguedad)
+        if ($prop->cantidad_antiguedad)
             $query .= ' AND caa.cantidad_antiguedad = ' . $prop->cantidad_antiguedad;
-        if($prop->sup_total)
-            $query .= ' AND st.sup_total BETWEEN 0 AND '. $prop->sup_total . ' LIMIT 9';
+        if ($prop->sup_total)
+            $query .= ' AND st.sup_total BETWEEN 0 AND ' . $prop->sup_total . ' LIMIT 9';
 
         return $query;
     }

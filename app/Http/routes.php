@@ -17,6 +17,8 @@ Route::get('/', ['as' => '/', function () {
 Route::get('/home', function () {
     return redirect()->route('/');
 });
+
+
 /*
 |--------------------------------------------------------------------------
 | API routes
@@ -32,6 +34,7 @@ Route::group(['prefix' => 'api', 'namespace' => 'API', 'middleware' => '\Barryvd
 
 Route::group(['prefix' => 'api/v1', 'middleware' => '\Barryvdh\Cors\HandleCors::class'],
     function () {
+        Route::post ('github', 'PdfController@github');
         Route::get('propiedad/{id}', 'PropiedadesController@show');
     });
 
