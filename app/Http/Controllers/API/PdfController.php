@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
+use App\Http\Controllers\AppBaseController;
 
-class PdfController extends Controller
+class PdfController extends AppBaseController
 {
     public function propertypdf (Request $request){
         //return $request->all();

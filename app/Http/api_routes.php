@@ -28,3 +28,5 @@ Route::get('ubicacion/{zona}/{tipo}/{operacion}', 'UbicacionAPIController@index'
 Route::get('emprendimientos', 'EmprendimientoAPIController@index');
 
 Route::resource('jobApplication', 'jobApplicationController');
+
+Route::post ('propertypdf', 'PdfController@propertypdf');
