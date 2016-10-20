@@ -13,7 +13,7 @@
         <h2 class="ok-property-title">{!! isset($datos->titulo[0]['contenido']) ? $datos->titulo[0]['contenido'] : $datos->ubica[0]['valor'] !!}</h2>
         @foreach ($datos->foto as $img)
             <div class="col-xs-3" style="margin-bottom: 10px">
-                <img src="http://{!! $img['foto'] !!}" class="img-responsive full-width" alt="">
+                <img src="{!! $img['foto'] !!}" class="img-responsive full-width" alt="">
             </div>
         @endforeach
     </div>
