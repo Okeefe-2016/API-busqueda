@@ -29,4 +29,4 @@ Route::get('emprendimientos', 'EmprendimientoAPIController@index');
 
 Route::resource('jobApplication', 'jobApplicationController');
 
-Route::post ('propertypdf', 'PdfController@propertypdf');
+Route::resource ('propertypdf', 'PdfController');
