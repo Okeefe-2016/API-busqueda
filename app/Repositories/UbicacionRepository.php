@@ -14,65 +14,98 @@ class UbicacionRepository
 
     public function getByParams(Request $request, $zona, $tipo, $operacion)
     {
-        $ubicationQuery = $this->getUbicationQuery();
+        $tipo = explode(',', $tipo);
+        $ubications = UbicacionPropiedad::where('id_padre', '>', 0)
+            ->where(function ($query) use ($request, $operacion, $tipo) {
+                $query->whereHas('childUbication', function ($q) {
+                })->orWhereHas('propertiesCount', function ($q) use ($request, $operacion, $tipo) {
+                    $q->where('activa', 1)
+                        ->where('tipo_oper_id', $operacion)
+                        ->whereIn('id_tipo_prop', $tipo);
+                });
+            })->where('nombre_ubicacion', 'like', '%' . $zona . '%')
+            ->with(['childUbication' => function ($query) use ($request, $operacion, $tipo) {
+                $query->whereHas('childUbication', function ($q) {
+                })->orWhereHas('propertiesCount', function ($q) use ($request, $operacion, $tipo) {
+                    $q->where('activa', 1)
+                        ->where('tipo_oper_id', $operacion)
+                        ->whereIn('id_tipo_prop', $tipo);
+                })->with(['childUbication' => function ($query) use ($request, $operacion, $tipo) {
+                    $query->whereHas('childUbication', function ($q) {
+                    })->orWhereHas('propertiesCount', function ($q) use ($request, $operacion, $tipo) {
+                        $q->where('activa', 1)
+                            ->where('tipo_oper_id', $operacion)
+                            ->whereIn('id_tipo_prop', $tipo);
+                    })->with(['childUbication' => function ($query) use ($request, $operacion, $tipo) {
+                        $query->whereHas('childUbication', function ($q) {
+                        })->orWhereHas('propertiesCount', function ($q) use ($request, $operacion, $tipo) {
+                            $q->where('activa', 1)
+                                ->where('tipo_oper_id', $operacion)
+                                ->whereIn('id_tipo_prop', $tipo);
+                        })->with(['childUbication', 'propertiesCount' => function ($query) use ($request, $operacion, $tipo) {
+                            $query->where('activa', 1)
+                                ->where('tipo_oper_id', $operacion)
+                                ->whereIn('id_tipo_prop', $tipo);
+                            if (!$request->rural && $request->emp != 0) {
+                                $query->where('id_emp','!=',0);
+                            }
+                            $query->get();
+                        }]);
+                    }, 'propertiesCount' => function ($query) use ($request, $operacion, $tipo) {
+                        $query->where('activa', 1)
+                            ->where('tipo_oper_id', $operacion)
+                            ->whereIn('id_tipo_prop', $tipo);
+                        if (!$request->rural && $request->emp != 0) {
+                            $query->where('id_emp','!=',0);
+                        }
+                        $query->get();
 
-        if (!$request->rural && $request->emp == ' is not null') {
-            $nomedif = 'AND  prop.nomedif = t4.nombre_ubicacion';
-        } else {
-            $nomedif = ' ';
+                    }]);
+                }, 'propertiesCount' => function ($query) use ($request, $operacion, $tipo) {
+                    $query->where('activa', 1)
+                        ->where('tipo_oper_id', $operacion)
+                        ->whereIn('id_tipo_prop', $tipo);
+                    if (!$request->rural && $request->emp != 0) {
+                        $query->where('id_emp','!=',0);
+                    }
+                    $query->get();
+
+                }]);
+            }, 'propertiesCount' => function ($query) use ($request, $operacion, $tipo) {
+                $query->where('activa', 1)
+                    ->where('tipo_oper_id', $operacion)
+                    ->whereIn('id_tipo_prop', $tipo);
+                if (!$request->rural && $request->emp != 0) {
+                    $query->where('id_emp','!=',0);
+                }
+                $query->get();
+            }])->get();
+        foreach ($ubications as $key => $ubic) {
+            $ubic->total = 0;
+            if ($ubic->propertiesCount && $ubic->propertiesCount['count']) {
+                $ubic->total += $ubic->propertiesCount['count'];
+            }
+            if (is_object($ubic->childUbication)) {
+                $ubic->total += $this->recursiveUbications($ubic->childUbication);
+            }
+            unset($ubic->childUbication);
+            unset($ubic->propertiesCount);
         }
-
-        $query = "{$ubicationQuery} 
-                 LEFT JOIN propiedad AS prop 
-                  ON t3.id_ubica = prop.id_ubica  
-                  AND prop.tipo_oper_id = $operacion AND prop.id_tipo_prop in($tipo) " . $nomedif . " 
-                WHERE t0.nombre_ubicacion != t1.nombre_ubicacion";
-        if (!$request->rural) {
-            $query .= " AND t4.nombre_ubicacion $request->emp";
-        }
-        $query .= "  AND prop.activa = 1
-                GROUP BY idZona
-                HAVING  valor LIKE '%$zona%'
-                  AND COUNT(prop.id_prop) > 0
-                ORDER BY cantidad desc";
-
-
-        $ubications = UbicacionPropiedad::hydrateRaw($query);
-
         return $ubications;
     }
 
-    /**
-     * @return string
-     */
-    public function getUbicationQuery()
+    protected function recursiveUbications($ubications, $count = 0, $level = 1)
     {
-        $ubicationQuery = "SELECT  
-                  t0.nombre_ubicacion AS pais, 
-                  t1.nombre_ubicacion AS zona_padre,
-                  t2.nombre_ubicacion AS localidad, 
-                  t3.nombre_ubicacion AS subzona ,
-                  t4.nombre_ubicacion AS zona_emprendimiento,
-                  (CASE
-                    WHEN t2.id_ubica is null THEN t1.id_ubica
-                    WHEN t3.id_ubica is null THEN t2.id_ubica
-                    WHEN t4.id_ubica is null THEN t3.id_ubica
-                    WHEN  t3.nombre_ubicacion = t4.nombre_ubicacion THEN t3.id_ubica
-                    ELSE t4.id_ubica
-                   END) as idZona,
-                  COUNT(prop.id_prop) as cantidad,
-                  (CASE 
-                    WHEN t2.nombre_ubicacion is null THEN CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion)
-                    WHEN t3.nombre_ubicacion is null THEN CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion,',', t2.nombre_ubicacion)
-                    WHEN t4.nombre_ubicacion is null THEN CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion,',', t2.nombre_ubicacion, ',', t3.nombre_ubicacion)
-                    ELSE CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion,',', t2.nombre_ubicacion, ',', t3.nombre_ubicacion, ',', t4.nombre_ubicacion)
-                  END) AS valor
-                FROM ubicacionpropiedad AS t0
-                LEFT JOIN ubicacionpropiedad AS t1 ON t1.id_padre = t0.id_ubica
-                LEFT JOIN ubicacionpropiedad AS t2 ON t2.id_padre = t1.id_ubica 
-                LEFT JOIN ubicacionpropiedad AS t3 ON t3.id_padre = t2.id_ubica 
-                LEFT JOIN ubicacionpropiedad AS t4 ON t4.id_padre = t3.id_ubica";
-
-        return $ubicationQuery;
+        foreach ($ubications as $value) {
+            if ($value->propertiesCount) {
+                $count += $value->propertiesCount['count'];
+            }
+            if (is_array($value->childUbication) || is_object($value->childUbication)) {
+                $count += $this->recursiveUbications($value->childUbication, 0, $level + 1);
+            } else {
+                return $count;
+            }
+        }
+        return $count;
     }
 }

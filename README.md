@@ -25,6 +25,10 @@ http://pastebin.com/GLQ19bva
 **Script PHP Para antiguedad default 0 en todas las propiedades**
 http://pastebin.com/2t5maHyt
 
+**Ejecutar el siguiente script**
+
+`UPDATE ubicacionpropiedad SET id_padre = 0 WHERE nombre_ubicacion = 'Argentina';`
+
 # Api Docs
 
 ## Busqueda de propiedades por zona

@@ -41,34 +41,107 @@ class UbicacionPropiedadRepository extends BaseRepository
      */
     public function getParentWithChildsQuery($request, $params)
     {
-        $keyword = $request->ubicacion;
-
-        $query = "
-                SELECT  
-                  t0.nombre_ubicacion AS pais, 
-                  t1.nombre_ubicacion AS zona_padre, 
-                  t2.nombre_ubicacion AS localidad,
-                  t3.nombre_ubicacion AS subzona, 
-                  t4.nombre_ubicacion AS zona_emprendimiento,
-                  #if (t4.id_ubica is not null, t4.id_ubica, t3.id_ubica) AS idZona,
-                  t3.id_ubica AS idZona,
-                  if(t4.nombre_ubicacion is not null, 
-                  	CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion,',', t2.nombre_ubicacion, ',', t3.nombre_ubicacion, ', ', t4.nombre_ubicacion) ,
-                  	CONCAT(t0.nombre_ubicacion,', ',t1.nombre_ubicacion,',', t2.nombre_ubicacion, ',', t3.nombre_ubicacion)
-                  ) AS valor
-                FROM ubicacionpropiedad AS t0
-                LEFT JOIN ubicacionpropiedad AS t1 ON t1.id_padre = t0.id_ubica
-                LEFT JOIN ubicacionpropiedad AS t2 ON t2.id_padre = t1.id_ubica
-                LEFT JOIN ubicacionpropiedad AS t3 ON t3.id_padre = t2.id_ubica 
-                LEFT JOIN ubicacionpropiedad AS t4 ON t4.id_padre = t3.id_ubica
-                WHERE t2.nombre_ubicacion != t3.nombre_ubicacion
-                HAVING idZona = $keyword";
-
-        $ubications = $this->ubicacionPropiedad->hydrateRaw($query);
-
-        $ubications = $this->searchUbicacionPropiedad($ubications, $request, $params);
-
+        $params['tipo'] = explode(',', $params['tipo']);
+        $ubications = UbicacionPropiedad::where('id_padre', '>', 0)
+            ->where('id_ubica', $params['ubicacion'])
+            ->with(['childUbication' => function ($query) use ($request, $params) {
+                $q = clone $query;
+                $prop = $q->has('properties')->exists();
+                $child = $q->has('childUbication')->exists();
+                if ($child && $prop) {
+                    $query->with(['childUbication' => function ($query) use ($request, $params) {
+                        $q = clone $query;
+                        $prop = $q->has('properties')->exists();
+                        $child = $q->has('childUbication')->exists();
+                        if ($child && $prop) {
+                            $query->with(['childUbication' => function ($query) use ($request, $params) {
+                                $q = clone $query;
+                                $prop = $q->has('properties')->exists();
+                                //$child = $q->has('childUbication')->exists();
+                                if ($prop) {
+                                    $query->with(['properties' => function ($query) use ($request, $params) {
+                                        $query->where('activa', 1)
+                                            ->where('tipo_oper_id', $params['operacion'])
+                                            ->whereIn('id_tipo_prop', $params['tipo']);
+                                        if (!$request->rural && $request->emp != 0) {
+                                            $query->where('id_emp','!=',0);
+                                        }
+                                    }]);
+                                }
+                            }, 'properties' => function ($query) use ($request, $params) {
+                                $query->where('activa', 1)
+                                    ->where('tipo_oper_id', $params['operacion'])
+                                    ->whereIn('id_tipo_prop', $params['tipo']);
+                                if (!$request->rural && $request->emp != 0) {
+                                    $query->where('id_emp','!=',0);
+                                }
+                            }]);
+                        }
+                        else if ($prop) {
+                            $query->with(['properties' => function ($query) use ($request, $params) {
+                                $query->where('activa', 1)
+                                    ->where('tipo_oper_id', $params['operacion'])
+                                    ->whereIn('id_tipo_prop', $params['tipo']);
+                                if (!$request->rural && $request->emp != 0) {
+                                    $query->where('id_emp','!=',0);
+                                }
+                            }]);
+                        }
+                    }, 'properties' => function ($query) use ($request, $params) {
+                        $query->where('activa', 1)
+                            ->where('tipo_oper_id', $params['operacion'])
+                            ->whereIn('id_tipo_prop', $params['tipo']);
+                        if (!$request->rural && $request->emp != 0) {
+                            $query->where('id_emp','!=',0);
+                        }
+                    }]);
+                } else if ($child) {
+                    $query->with(['childUbication' => function ($query) use ($request, $params) {
+                        $q = clone $query;
+                        $prop = $q->has('properties')->exists();
+                        //$child = $q->has('childUbication')->exists();
+                        if ($prop) {
+                            $query->with(['properties' => function ($query) use ($request, $params) {
+                                $query->where('activa', 1)
+                                    ->where('tipo_oper_id', $params['operacion'])
+                                    ->whereIn('id_tipo_prop', $params['tipo']);
+                                if (!$request->rural && $request->emp != 0) {
+                                    $query->where('id_emp','!=',0);
+                                }
+                            }]);
+                        }
+                    }]);
+                } else if ($prop) {
+                    $query->with(['properties' => function ($query) use ($request, $params) {
+                        $query->where('activa', 1)
+                            ->where('tipo_oper_id', $params['operacion'])
+                            ->whereIn('id_tipo_prop', $params['tipo']);
+                        if (!$request->rural && $request->emp != 0) {
+                            $query->where('id_emp','!=',0);
+                        }
+                    }]);
+                }
+            }, 'properties' => function ($query) use ($request, $params) {
+                $query->where('activa', 1)
+                    ->where('tipo_oper_id', $params['operacion'])
+                    ->whereIn('id_tipo_prop', $params['tipo']);
+                if (!$request->rural && $request->emp != 0) {
+                    $query->where('id_emp','!=',0);
+                }
+            }])->get();
         return $ubications;
+        //return $this->recursiveUbications($ubications);
+    }
+
+    protected function recursiveUbications($ubications, $array = array(), $level = 1)
+    {
+        foreach ($ubications as $value) {
+            if ($value::has('childUbication')->exists()) {
+                print_r("tiene");
+                exit;
+            }
+        }
+        return $array;
     }
 
     /**

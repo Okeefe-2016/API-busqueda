@@ -40,12 +40,6 @@ class UbicacionAPIController extends AppBaseController
             return response()->json(['message' => 'Tipo de propiedad rural no valido', 'code' => 401], 401);
         }
 
-        if ($request->emp == 0) {
-            $request->emp = " is null";
-        } else {
-            $request->emp = " is not null";
-        }
-
         $ubications = $this->ubicacion->getByParams($request, $zona, $tipo, $operacion);
         
         return $this->sendResponse($ubications, '');
