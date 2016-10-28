@@ -36,6 +36,7 @@ class Propiedad extends Model
 
     protected $primaryKey = 'id_prop';
 
+
     public $fillable = [
         
     ];
@@ -65,6 +66,8 @@ class Propiedad extends Model
     {
         return $this->hasMany(PropiedadCaracteristica::class, 'id_prop');
     }
+
+
 
 
     public function emprendimiento()

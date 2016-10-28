@@ -10,6 +10,8 @@ class UbicacionPropiedad extends Model
 
     protected $primaryKey = 'id_ubica';
 
+    protected $appends = [ 'nombre_completo'];
+
     public $timestamps = false;
 
 
@@ -34,6 +36,24 @@ class UbicacionPropiedad extends Model
                 $query->selectRaw('id_prop,foto as foto_principal')
                     ->where('posicion', 1);
             }]);
+    }
+
+    public function getNombreCompletoAttribute($value)
+    {
+        $name = $this->attributes['nombre_ubicacion'];
+        if($this->attributes['id_padre']){
+            $ubic = UbicacionPropiedad::where('id_ubica', $this->attributes['id_padre'])->first();
+            $name = $ubic->nombre_ubicacion.', '.$name;
+            if($ubic->id_padre){
+                $ubicp = UbicacionPropiedad::where('id_ubica', $ubic->id_padre)->first();
+                $name = $ubicp->nombre_ubicacion.', '.$name;
+                if($ubicp->id_padre){
+                    $ubicb = UbicacionPropiedad::where('id_ubica', $ubicp->id_padre)->first();
+                    $name = $ubicb->nombre_ubicacion.', '.$name;
+                }
+            }
+        }
+        return $name;
     }
 
     public function childUbication()
