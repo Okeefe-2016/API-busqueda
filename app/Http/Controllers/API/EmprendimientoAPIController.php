@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lucas
- * Date: 20/9/16
- * Time: 09:37
- */
 
 namespace App\Http\Controllers\API;
 
@@ -23,6 +17,12 @@ class EmprendimientoAPIController extends AppBaseController
     {
         $emprendimiento = Emprendimiento::all();
 
+        return $emprendimiento;
+    }
+
+    public function show($id)
+    {
+        $emprendimiento = Emprendimiento::with('caracteristicas','properties')->find($id);
         return $emprendimiento;
     }
 }

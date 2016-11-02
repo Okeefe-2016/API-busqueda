@@ -68,8 +68,6 @@ class Propiedad extends Model
     }
 
 
-
-
     public function emprendimiento()
     {
         return $this->belongsTo(Emprendimiento::class, 'id_emp');
@@ -78,5 +76,10 @@ class Propiedad extends Model
     public function foto()
     {
         return $this->hasMany(Foto::class, 'id_prop', 'id_prop');
+    }
+
+    public function ubicacion()
+    {
+        return $this->hasOne(UbicacionPropiedad::class, 'id_ubica', 'id_ubica');
     }
 }
