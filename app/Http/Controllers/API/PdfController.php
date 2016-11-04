@@ -15,6 +15,10 @@ class PdfController extends AppBaseController
     public function store (Request $request){
         //return $request->all();
         //return \PDF::loadView('ruta.vista', $datos)->download('nombre-archivo.pdf');
-        return \PDF::loadView('pdf.property',['datos' => $request])->stream('nombre-archivo.pdf');
+        $view = 'pdf.property';
+        if($request->pdfRoute == 'venture'){
+            $view = 'pdf.venture';
+        }
+        return \PDF::loadView($view,['datos' => $request])->stream('nombre-archivo.pdf');
     }
 }
