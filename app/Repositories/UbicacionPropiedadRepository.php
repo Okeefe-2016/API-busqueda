@@ -28,7 +28,6 @@ class UbicacionPropiedadRepository extends BaseRepository
                                 SearchTransformer $searchTranformer, PropiedadRepository $propiedadRepository)
     {
         $this->propiedadRepository = $propiedadRepository;
-        UbicacionPropiedad::$withoutAppends = true;
         $this->ubicacionPropiedad = $ubicacionPropiedad;
         $this->searchService = $searchTranformer;
     }
@@ -130,7 +129,6 @@ class UbicacionPropiedadRepository extends BaseRepository
                     $query->where('id_emp','!=',0);
                 }
             }])->get();
-
         return $ubications;
         //return $this->recursiveUbications($ubications);
     }

@@ -94,7 +94,6 @@ class PropiedadRepository extends BaseRepository
      */
     public function getManyWithUbica($ids, $ubica)
     {
-
         $propiedad = Propiedad::with(['foto', 'propiedad_caracteristicas' => function ($q) {
             $q->select('id_prop_carac', 'id_prop', 'id_carac', 'contenido');
         }, 'propiedad_caracteristicas.caracteristica' => function ($q) {
@@ -117,7 +116,6 @@ class PropiedadRepository extends BaseRepository
      */
     public function byPropertiesSpec($element, $searchValues, $params)
     {
-
         if ($searchValues['rural'] === false) {
             $query = $this->getPropiedadQuery($element, $searchValues, $params);
         } else {
