@@ -10,6 +10,7 @@
 <div class="container">
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="row">
+        <h2 class="ok-property-title">{!! isset($datos->nombre) ? $datos->nombre : $datos->id_emp !!}</h2>
         <!-- imagenes -->
     </div>
     <h3 class="ok-ficha-tecnica-tit">Ficha Tecnica</h3>
