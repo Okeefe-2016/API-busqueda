@@ -91,6 +91,10 @@ class UbicacionRepository
             unset($ubic->childUbication);
             unset($ubic->propertiesCount);
         }
+        foreach ($ubications as $ubic) {
+            // if you want to add new fields to the fields that are already appended
+            $ubic->append('nombre_completo');
+        }
         return $ubications;
     }
 
