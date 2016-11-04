@@ -45,3 +45,5 @@
 .color-orange{
     color: #e9580c;
 }
+.table thead {display: table-header-group}
+.table tfoot {display: table-row-group}

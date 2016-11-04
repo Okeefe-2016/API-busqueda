@@ -10,7 +10,7 @@
 <div class="container">
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="row">
-        venture
+        <!-- imagenes -->
     </div>
     <h3 class="ok-ficha-tecnica-tit">Ficha Tecnica</h3>
     <div class="row ok-ficha-tecnica">
@@ -50,7 +50,7 @@
         @endif
         @if (count($datos->terminaciones) > 0)
             <div class="<?php echo (count($datos->amenities) > 0) ? 'col-xs-6' : 'col-xs-12'  ?> padding-0">
-                <h3 class="ok-caracteristicas-tit">Amenities</h3>
+                <h3 class="ok-caracteristicas-tit">Terminaciones</h3>
                 @foreach ($datos->terminaciones as $char)
                     <div class="col-xs-12 carac-item">
                         {!! $char['contenido'] !!}
