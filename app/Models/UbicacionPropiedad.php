@@ -29,7 +29,7 @@ class UbicacionPropiedad extends Model
                 ,'id_emp','oportunidad','subtipo_prop','tipo_oper_id')
             ->with(['propiedad_caracteristicas' => function ($query) {
                 $query->selectRaw('id_prop,id_carac, contenido')
-                    ->whereIn('id_carac', [71, 373, 374, 198, 255, 257, 208, 161, 166, 165, 164]);
+                    ->whereIn('id_carac', [71, 373, 374, 198, 255, 257, 208, 161, 166, 165, 164, 303]);
             }, 'foto' => function ($query) {
                 $query->selectRaw('id_prop,foto as foto_principal')
                     ->where('posicion', 1);
