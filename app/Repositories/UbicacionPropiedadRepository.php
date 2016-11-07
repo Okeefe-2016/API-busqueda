@@ -64,7 +64,7 @@ class UbicacionPropiedadRepository extends BaseRepository
                                             ->where('tipo_oper_id', $params['operacion'])
                                             ->whereIn('id_tipo_prop', $params['tipo']);
                                         if (!$request->rural && $request->emp != 0) {
-                                            $query->where('id_emp','!=',0);
+                                            $query->where('id_emp', '!=', 0);
                                         }
                                     }]);
                                 }
@@ -73,17 +73,16 @@ class UbicacionPropiedadRepository extends BaseRepository
                                     ->where('tipo_oper_id', $params['operacion'])
                                     ->whereIn('id_tipo_prop', $params['tipo']);
                                 if (!$request->rural && $request->emp != 0) {
-                                    $query->where('id_emp','!=',0);
+                                    $query->where('id_emp', '!=', 0);
                                 }
                             }]);
-                        }
-                        else if ($prop) {
+                        } else if ($prop) {
                             $query->with(['properties' => function ($query) use ($request, $params) {
                                 $query->where('activa', 1)
                                     ->where('tipo_oper_id', $params['operacion'])
                                     ->whereIn('id_tipo_prop', $params['tipo']);
                                 if (!$request->rural && $request->emp != 0) {
-                                    $query->where('id_emp','!=',0);
+                                    $query->where('id_emp', '!=', 0);
                                 }
                             }]);
                         }
@@ -92,7 +91,7 @@ class UbicacionPropiedadRepository extends BaseRepository
                             ->where('tipo_oper_id', $params['operacion'])
                             ->whereIn('id_tipo_prop', $params['tipo']);
                         if (!$request->rural && $request->emp != 0) {
-                            $query->where('id_emp','!=',0);
+                            $query->where('id_emp', '!=', 0);
                         }
                     }]);
                 } else if ($child) {
@@ -106,7 +105,7 @@ class UbicacionPropiedadRepository extends BaseRepository
                                     ->where('tipo_oper_id', $params['operacion'])
                                     ->whereIn('id_tipo_prop', $params['tipo']);
                                 if (!$request->rural && $request->emp != 0) {
-                                    $query->where('id_emp','!=',0);
+                                    $query->where('id_emp', '!=', 0);
                                 }
                             }]);
                         }
@@ -117,7 +116,7 @@ class UbicacionPropiedadRepository extends BaseRepository
                             ->where('tipo_oper_id', $params['operacion'])
                             ->whereIn('id_tipo_prop', $params['tipo']);
                         if (!$request->rural && $request->emp != 0) {
-                            $query->where('id_emp','!=',0);
+                            $query->where('id_emp', '!=', 0);
                         }
                     }]);
                 }
@@ -126,9 +125,13 @@ class UbicacionPropiedadRepository extends BaseRepository
                     ->where('tipo_oper_id', $params['operacion'])
                     ->whereIn('id_tipo_prop', $params['tipo']);
                 if (!$request->rural && $request->emp != 0) {
-                    $query->where('id_emp','!=',0);
+                    $query->where('id_emp', '!=', 0);
                 }
             }])->get();
+        foreach ($ubications as $ubic) {
+            // if you want to add new fields to the fields that are already appended
+            $ubic->append('nombre_completo');
+        }
         return $ubications;
         //return $this->recursiveUbications($ubications);
     }
