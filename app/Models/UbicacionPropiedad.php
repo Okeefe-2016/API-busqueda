@@ -25,7 +25,7 @@ class UbicacionPropiedad extends Model
     public function properties()
     {
         return $this->hasMany(Propiedad::class, 'id_ubica', 'id_ubica')
-            ->select('id_prop','activa','calle','destacado','goglat','goglong','id_tipo_prop','id_ubica'
+            ->select('id_prop','activa','calle','nro','destacado','goglat','goglong','id_tipo_prop','id_ubica'
                 ,'id_emp','oportunidad','subtipo_prop','tipo_oper_id')
             ->with(['propiedad_caracteristicas' => function ($query) {
                 $query->selectRaw('id_prop,id_carac, contenido')
