@@ -21,6 +21,8 @@ Route::get('sugeridos/{id}', 'SuggestedAPIController@show');
 
 Route::get('propiedades/lists', 'PropiedadAPIController@byIds');
 
+Route::get('propiedades/lastest/{total}', 'PropiedadAPIController@lastCreated');
+
 Route::get('propiedades/{tipo}/{operacion}', 'UbicacionPropiedadAPIController@getUbicacionPropiedad');
 
 Route::get('ubicacion/{zona}/{tipo}/{operacion}', 'UbicacionAPIController@index');

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\CreatePropiedadesAPIRequest;
 use App\Http\Requests\API\UpdatePropiedadesAPIRequest;
-use App\Models\Propiedades;
+use App\Models\Propiedad;
 use App\Models\UbicacionPropiedad;
 use App\Repositories\PropiedadRepository;
 use App\Repositories\UbicacionPropiedadRepository;
@@ -21,7 +21,6 @@ use Symfony\Component\Console\Input\Input;
  * Class PropiedadController
  * @package App\Http\Controllers\API
  */
-
 class PropiedadAPIController extends AppBaseController
 {
     /** @var  PropiedadesRepository */
@@ -40,10 +39,18 @@ class PropiedadAPIController extends AppBaseController
             $prop = $this->propiedadesRepository->byIdProps($lists['lists'], $ubica);
 
             return response()->json($prop);
-            
+
         } else {
             return response()->json([]);
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function lastCreated($limit)
+    {
+        return Propiedad::with(['foto', 'propiedad_caracteristicas'])->orderBy('id_prop', 'desc')->limit($limit)->get();
     }
 
     /**
@@ -125,6 +132,8 @@ class PropiedadAPIController extends AppBaseController
      *      )
      * )
      */
+
+
     public function store(CreatePropiedadesAPIRequest $request)
     {
         $input = $request->all();
