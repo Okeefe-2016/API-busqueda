@@ -50,7 +50,7 @@ class PropiedadAPIController extends AppBaseController
      */
     public function lastCreated($limit)
     {
-        return Propiedad::with(['foto', 'propiedad_caracteristicas'])->orderBy('id_prop', 'desc')->limit($limit)->get();
+        return Propiedad::with(['foto', 'propiedad_caracteristicas', 'ubicacion'])->orderBy('id_prop', 'desc')->limit($limit)->get();
     }
 
     /**
